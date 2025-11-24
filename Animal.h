@@ -1,0 +1,44 @@
+//
+// Created by Nikita Bekeruk on 06/11/2025.
+//
+
+#include<string>
+
+#ifndef ANIMAL_H
+#define ANIMAL_H
+
+using namespace std;
+
+
+class Animal {
+private:
+    int ID;
+    string name;
+    string birthDate;
+    string breed;
+    string CareSchedule;
+
+public:
+    Animal(int ID, const string& name, const string& birthDate, const string& breed, const string& CareSchedule);
+    ~Animal();
+
+    string GetName() const;
+    void SetName(const string&);
+    string GetBirthDate() const;
+    void SetBirthDate(const string&);
+    string GetBreed() const;
+    void SetBreed(const string&);
+    int GetID() const;
+    void SetID(int);
+    virtual void MakeSound();
+    virtual string GetType();
+    int CalculateAge() const;
+    string GetCareSchedule() const;
+    void SetCareSchedule(const string&);
+
+    static string CarvinoresWeightToSize(int weight);
+};
+
+
+
+#endif //ANIMAL_H
