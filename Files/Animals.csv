@@ -1,0 +1,4 @@
+﻿ID,Type,Name,BirthDate,Breed,CareSchedule,Weight,RodentType
+1001,Dog,Mihai,08/10/2003,Chihuahua,Everyday care,65,NULL
+3001,Rodent,Nikita,17/01/2000,White Ukrainian,Every other day,NULL,Mouse
+1002,Dog,Jack,19/02/2018,Terrier,Everyday,43,NULL

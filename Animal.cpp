@@ -6,8 +6,9 @@
 
 #include "PetHotel.h"
 
-Animal::Animal(int ID, const string &name, const string &birthDate, const string &breed, const string &CareSchedule):
-    ID(ID), name(name), birthDate(birthDate), breed(breed), CareSchedule(CareSchedule) {}
+Animal::Animal(const string &name, const string &birthDate, const string &breed, const string &careSchedule):
+    name(name), birthDate(birthDate), breed(breed), careSchedule(careSchedule) {}
+
 
 Animal::~Animal() {}
 
@@ -45,18 +46,17 @@ void Animal::SetID(int ID) {
 }
 
 string Animal::GetCareSchedule() const {
-    return this->CareSchedule;
+    return this->careSchedule;
 }
 
 
 void Animal::SetCareSchedule(const string& careSchedule) {
-    this->CareSchedule = careSchedule;
+    this->careSchedule = careSchedule;
 }
 
 void Animal::MakeSound() {}
 
 string Animal::GetType() {}
-
 
 
 string Animal::CarvinoresWeightToSize(int weight) {

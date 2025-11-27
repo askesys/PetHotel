@@ -12,15 +12,18 @@ using namespace std;
 
 class Animal {
 private:
-    int ID;
     string name;
     string birthDate;
     string breed;
-    string CareSchedule;
+    string careSchedule;
+
+protected:
+    int ID;
 
 public:
-    Animal(int ID, const string& name, const string& birthDate, const string& breed, const string& CareSchedule);
-    ~Animal();
+    Animal(const string &name, const string &birthDate, const string &breed, const string &careSchedule);
+
+    virtual ~Animal();
 
     string GetName() const;
     void SetName(const string&);

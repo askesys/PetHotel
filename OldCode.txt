@@ -1,0 +1,60 @@
+ /*
+    unsigned int count;
+    string name, birthDate, breed, careSchedule, size;
+    int weight;
+    bool putTogether;
+
+    cout << "Enter the number of animals: ";
+    cin >> count;
+    cin.get();
+    cout << "Should be your animals be put with other animals (0/1): " ;
+    cin >> putTogether;
+    cin.get();
+
+
+    for (int i = 0; i < count; i++) {
+        cout << "Enter the name of animal: " << i+1 << ": ";
+        cin >> name;
+        cin.get();
+        cout << "Enter the birth date: ";
+        cin >> birthDate;
+        cin.get();
+        cout << "Enter the breed: ";
+        cin >> breed;
+        cin.get();
+        cout << "Enter the care schedule: ";
+        getline(cin, careSchedule);
+        cin.get();
+        cout << "Enter the weight: ";
+        cin >> weight;
+        cin.get();
+        cout << endl;
+
+        Animal* animal = new Dog(IDManager::NewID("Animal"), name, birthDate, breed, careSchedule, weight);
+        */
+        int putTogether = 1;
+
+        Animal* dog1 = new Dog("Mihai", "08/10/2003", "Chihuahua", "everyday", 60);
+        Animal* dog2 = new Dog("Nikita", "17/01/2000", "Bulldog", "everyday", 73);
+        vector<Animal*> dogs;
+        int weights[] = {60, 78};
+        dogs.push_back(dog1);
+        dogs.push_back(dog2);
+
+        for (int i = 0; i < dogs.size(); i++) {
+            string size = Animal::CarvinoresWeightToSize(weights[i]);
+            Animal* animal = dogs[i];
+            Kennel* suitableKennel = petHotel.ChooseKennel(size, animal->GetType(), putTogether);
+
+            if (suitableKennel == nullptr) {
+                cout << "We cannot accommodate this animal";
+                delete dogs[i];
+            }else {
+                cout << animal->GetType() << " " << animal->GetName() << " was succesfully accommodate in kennel N" << suitableKennel->GetID() << endl;
+                suitableKennel->AddAnimal(animal);
+                petHotel.AddAnimal(animal);
+            }
+        }
+
+        Reservation* reservation = new Reservation(IDManager::NewID("Reservation"),"06/11/2025", "08/11/2025", dogs, putTogether);
+        petHotel.AddReservation(reservation);

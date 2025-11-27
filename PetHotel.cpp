@@ -8,7 +8,35 @@
 #include <iomanip>
 #include<string>
 
+#include "IDManager.h"
+#include "Files/AnimalsFH.h"
+
 using namespace std;
+
+PetHotel::PetHotel() {
+    SetAnimals(animalsFH.Read());
+    SetReservations(reservationsFH.Read(&animalsMap));
+    SetKennels(kennelsFH.Read(&animalsMap));
+    IDManager::Read();
+}
+
+PetHotel::~PetHotel() {
+    IDManager::Write();
+
+    for (Kennel* kennel: GetKennels()) {
+        delete kennel;
+    }
+
+    for (Reservation* reservation: GetReservations()) {
+        delete reservation;
+    }
+
+    for (Animal* animal: GetAnimals()) {
+        delete animal;
+    }
+}
+
+
 
 string PetHotel::GetName() const {
     return this->name;
@@ -32,6 +60,15 @@ vector<Animal*> PetHotel::GetAnimals() const {
 
 void PetHotel::SetAnimals(vector<Animal*> animals) {
     this->animals = animals;
+    for (Animal* animal: animals) {
+        animalsMap[animal->GetID()] = animal;
+    }
+}
+
+void PetHotel::AddAnimal(Animal* animal) {
+    this->animals.push_back(animal);
+    animalsFH.Write(animal);
+    animalsMap[animal->GetID()] = animal;
 }
 
 vector<Kennel*> PetHotel::GetKennels() const {
@@ -52,6 +89,7 @@ void PetHotel::SetReservations(vector<Reservation*> reservations) {
 
 void PetHotel::AddReservation(Reservation *reservation) {
     this->reservations.push_back(reservation);
+    reservationsFH.Write(reservation);
 }
 
 Kennel* PetHotel::ChooseKennel(int id) {
@@ -101,10 +139,6 @@ void PetHotel::ListKannels() {
         cout << endl;
     }
     cout << "======================================================================================" << endl;
-}
-
-void PetHotel::AddAnimal(Animal* animal) {
-    this->animals.push_back(animal);
 }
 
 void PetHotel::ListReservations() {

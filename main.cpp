@@ -2,73 +2,100 @@
 #include "PetHotel.h"
 #include "IDManager.h"
 #include<random>
-#include "Dog.h"
+
+#include "Animals/Cat.h"
+#include "Animals/Dog.h"
+#include "Animals/Rodent.h"
+
+#include "Files/AnimalsFH.h"
 
 using namespace std;
 
 
-void MakeReservation(PetHotel& petHotel) {
-    /*
-    unsigned int count;
-    string name, birthDate, breed, careSchedule, size;
+void RegisterAnimal(PetHotel& petHotel) {
+    string animalType, name, birthDate, bread, careSchedule, rodentType;
     int weight;
-    bool putTogether;
 
-    cout << "Enter the number of animals: ";
-    cin >> count;
+    while (animalType != "1" && animalType != "2" && animalType != "3") {
+        cout << "Choose a type of your animal" << endl;
+        cout << "\t" << "1. Dog" << endl;
+        cout << "\t" << "2. Cat" << endl;
+        cout << "\t" << "3. Rodent" << endl;
+        cout << "\t" << "Write \"exit\" to abort this procedure" << endl;
+        cout << "Enter your choice: ";
+        cin >> animalType;
+        cin.get();
+
+        if (animalType == "exit") return;
+    }
+
+    cout << "Enter name of your animal: ";
+    getline(cin, name);
+    cout << "Enter birth date of your animal: ";
+    cin >> birthDate;
     cin.get();
-    cout << "Should be your animals be put with other animals (0/1): " ;
-    cin >> putTogether;
-    cin.get();
+    cout << "Enter breed of your animal: ";
+    getline(cin, bread);
+    cout << "Enter care schedule: ";
+    getline(cin, careSchedule);
 
-
-    for (int i = 0; i < count; i++) {
-        cout << "Enter the name of animal: " << i+1 << ": ";
-        cin >> name;
-        cin.get();
-        cout << "Enter the birth date: ";
-        cin >> birthDate;
-        cin.get();
-        cout << "Enter the breed: ";
-        cin >> breed;
-        cin.get();
-        cout << "Enter the care schedule: ";
-        getline(cin, careSchedule);
-        cin.get();
-        cout << "Enter the weight: ";
+    if (animalType == "1") {
+        cout << "Enter weight of animal: ";
         cin >> weight;
         cin.get();
-        cout << endl;
-
-        Animal* animal = new Dog(IDManager::NewID("Animal"), name, birthDate, breed, careSchedule, weight);
-        */
-        int putTogether = 1;
-
-        Animal* dog1 = new Dog(IDManager::NewID("Animal"), "Mihai", "08/10/2003", "Chihuahua", "everyday", 60);
-        Animal* dog2 = new Dog(IDManager::NewID("Animal"), "Nikita", "17/01/2000", "Bullgod", "everyday", 73);
-        vector<Animal*> dogs;
-        int weights[] = {60, 78};
-        dogs.push_back(dog1);
-        dogs.push_back(dog2);
-
-        for (int i = 0; i < dogs.size(); i++) {
-            string size = Animal::CarvinoresWeightToSize(weights[i]);
-            Animal* animal = dogs[i];
-            Kennel* suitableKennel = petHotel.ChooseKennel(size, animal->GetType(), putTogether);
-
-            if (suitableKennel == nullptr) {
-                cout << "We cannot accommodate this animal";
-                delete dogs[i];
-            }else {
-                cout << animal->GetType() << " " << animal->GetName() << " was succesfully accommodate in kennel N" << suitableKennel->GetID() << endl;
-                suitableKennel->AddAnimal(animal);
-                petHotel.AddAnimal(animal);
-            }
-        }
-
-        Reservation* reservation = new Reservation(IDManager::NewID("Reservation"),"06/11/2025", "08/11/2025", dogs, putTogether);
-        petHotel.AddReservation(reservation);
+        Dog* dog = new Dog(name, birthDate, bread, careSchedule, weight);
+        petHotel.AddAnimal(dog);
+        cout << "Your dog was succesfully added to our Pet Hotel. Its ID is " << dog->GetID() << endl;
     }
+    else if (animalType == "2") {
+        cout << "Enter weight of animal: ";
+        cin >> weight;
+        cin.get();
+        Cat* cat = new Cat(name, birthDate, bread, careSchedule, weight);
+        petHotel.AddAnimal(cat);
+        cout << "Your cat was succesfully added to our Pet Hotel. Its ID is " << cat->GetID() << endl;
+    }
+    else if (animalType == "3") {
+        cout << "Enter type of rodent: ";
+        getline(cin, rodentType);
+        cin.get();
+        Rodent* rodent = new Rodent(name, birthDate, bread, careSchedule, rodentType);
+        petHotel.AddAnimal(rodent);
+        cout << "Your rodent was succesfully added to our Pet Hotel. Its ID is " << rodent->GetID() << endl;
+    }
+}
+
+void MakeReservation(PetHotel& petHotel) {
+    string startDate, endDate, isPutTogetherStr{"hd8ch3"};
+    int shoudlExitAnimalChoose{0};
+
+    cout << "Enter start date: ";
+    cin >> startDate;
+    cin.get();
+    cout << "Enter end date: ";
+    cin >> endDate;
+    cin.get();
+    while (isPutTogetherStr != "y" && isPutTogetherStr != "n") {
+        cout << "Should your animals be put together with other animals (y/n): ";
+        cin >> isPutTogetherStr;
+        cin.get();
+    }
+    bool isPutTogether = (isPutTogetherStr == "y" ? true : false);
+
+    while (shoudlExitAnimalChoose < 1 || shoudlExitAnimalChoose > 4) {
+        cout << "Checking whether animal can be accomodated.";
+        cout << "\t" << "1. Enter animal's ID";
+        cout << "\t" << "2. Find an animal by name";
+        cout << "\t" << "3. Add an animal";
+        cout << "\t" << "4. Exit";
+        cout << "Choose an option: ";
+        cin >> shoudlExitAnimalChoose;
+        cin.get();
+
+
+
+    }
+}
 
 
 
@@ -107,28 +134,15 @@ vector<Kennel*> InitKennels() {
 int main() {
     PetHotel petHotel;
 
-    petHotel.SetKennels(InitKennels());
+    //petHotel.SetKennels(InitKennels());
 
-    MakeReservation(petHotel);
+    //MakeReservation(petHotel);
+
+    //RegisterAnimal(petHotel);
 
     petHotel.ListKannels();
     petHotel.ListReservations();
     petHotel.ListAnimals();
-
-    vector<Kennel*> phKens = petHotel.GetKennels();
-    for (int i = 0; i < phKens.size(); i++) {
-        delete phKens[i];
-    }
-
-    vector<Animal*> animals = petHotel.GetAnimals();
-    for (int i = 0; i < animals.size(); i++) {
-        delete animals[i];
-    }
-
-    vector<Reservation*> reservations = petHotel.GetReservations();
-    for (int i = 0; i < reservations.size(); i++) {
-        delete reservations[i];
-    }
 
 
     return 0;

@@ -14,6 +14,16 @@ add_executable(PetHotel main.cpp
         PetHotel.cpp
         IDManager.cpp
         IDManager.h
-        Dog.cpp
-        Dog.h
+        Animals/Dog.cpp
+        Animals/Dog.h
+        Animals/Cat.cpp
+        Animals/Cat.h
+        Animals/Rodent.cpp
+        Animals/Rodent.h
+        Files/AnimalsFH.cpp
+        Files/AnimalsFH.h
+        Files/ReservationsFH.cpp
+        Files/ReservationsFH.h
+        Files/KennelsFH.cpp
+        Files/KennelsFH.h
 )

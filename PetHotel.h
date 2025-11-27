@@ -2,10 +2,15 @@
 // Created by Nikita Bekeruk on 05/11/2025.
 //
 
+#include <map>
 #include<string>
 #include "Animal.h"
 #include "Reservation.h"
 #include "Kennel.h"
+#include "Files/AnimalsFH.h"
+#include "Files/KennelsFH.h"
+#include "Files/ReservationsFH.h"
+
 using namespace std;
 
 #ifndef PETHOTEL_H
@@ -18,8 +23,15 @@ private:
     vector<Animal*> animals;
     vector<Kennel*> kennels;
     vector<Reservation*> reservations;
+    AnimalsFH animalsFH;
+    map<int, Animal*> animalsMap;
+    ReservationsFH reservationsFH;
+    KennelsFH kennelsFH;
 
 public:
+    PetHotel();
+    ~PetHotel();
+
     string GetName() const;
     void SetName(const string&);
     string GetAddress() const;
