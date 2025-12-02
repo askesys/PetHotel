@@ -6,8 +6,8 @@
 
 #include "PetHotel.h"
 
-Animal::Animal(const string &name, const string &birthDate, const string &breed, const string &careSchedule):
-    name(name), birthDate(birthDate), breed(breed), careSchedule(careSchedule) {}
+Animal::Animal(const string &name, const string &birthDate, const string &breed):
+    name(name), birthDate(birthDate), breed(breed) {}
 
 
 Animal::~Animal() {}
@@ -71,6 +71,33 @@ string Animal::CarvinoresWeightToSize(int weight) {
 
     return "Invalid string";
 }
+
+string Animal::RecommendCareSchedule(const string &type, int weight) {
+    switch (type) {
+        case "Dog":
+            return "Should be walked several times a day";
+            break;
+        case "Cat":
+            if (weight >= 15){ return "Should be fed 4 times per day";}
+            else if (weight > 0 && weight < 15){ return "Should be fed 3 times per day";}
+            else{throw invalid_argument("RecommendCareSchedule: passed wrong weight");}
+        default:
+            throw invalid_argument("RecommendCareSchedule: passed wrong type");
+    }
+}
+
+string Animal::RecommendCareSchedule(const string &type, const string &rodentType) {
+    switch (type) {
+        case "Rodent":
+            if (rodentType == "Rabbit"){ return "Should be cleaned each 2 days";}
+            else if (rodentType == "GuineaPig"){ return "Should be cleaned each 3 days";}
+            else if (rodentType == "Mouse"){ return "Should be cleaned each 4 days";}
+            else{throw invalid_argument("RecommendCareSchedule: passed wrong rodentType");}
+        default:
+            throw invalid_argument("RecommendCareSchedule: passed wrong type");
+    }
+}
+
 
 
 

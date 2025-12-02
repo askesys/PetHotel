@@ -20,6 +20,7 @@ private:
 public:
     vector<Animal*> Read();
     void Write(Animal* animal);
+    void WriteAll(vector<Animal*> animals);
 };
 
 

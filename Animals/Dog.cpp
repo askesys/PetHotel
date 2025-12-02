@@ -8,14 +8,14 @@
 #include <ostream>
 #include "../IDManager.h"
 
-Dog::Dog(const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight):
-    Animal(name, birthDate, breed, careSchedule), weight(weight)
+Dog::Dog(const string &name, const string &birthDate, const string &breed, int weight):
+    Animal(name, birthDate, breed), weight(weight)
 {
     this->ID = IDManager::NewID("Dog");
 }
 
-Dog::Dog(int ID, const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight):
-    Animal(name, birthDate, breed, careSchedule), weight(weight)
+Dog::Dog(int ID, const string &name, const string &birthDate, const string &breed, int weight):
+    Animal(name, birthDate, breed), weight(weight)
 {
     this->ID = ID;
 }

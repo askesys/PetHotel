@@ -22,6 +22,8 @@ private:
 public:
     vector<Reservation*> Read(map<int, Animal*> *animalsMap);
     void Write(Reservation* reservation);
+    void WriteAll(vector<Reservation*> reservations);
+    void Delete(Reservation* reservation);
 };
 
 

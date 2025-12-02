@@ -8,14 +8,14 @@
 
 using namespace std;
 
-Rodent::Rodent(const string &name, const string &birthDate, const string &breed, const string &careSchedule, const string &rodentType):
-    Animal(name, birthDate, breed, careSchedule), rodentType(rodentType)
+Rodent::Rodent(const string &name, const string &birthDate, const string &breed, const string &rodentType):
+    Animal(name, birthDate, breed), rodentType(rodentType)
 {
     IDManager::NewID("Rodent");
 }
 
-Rodent::Rodent(int ID, const string &name, const string &birthDate, const string &breed, const string &careSchedule, const string &rodentType):
-    Animal(name, birthDate, breed, careSchedule), rodentType(rodentType)
+Rodent::Rodent(int ID, const string &name, const string &birthDate, const string &breed, const string &rodentType):
+    Animal(name, birthDate, breed), rodentType(rodentType)
 {
     this->ID = ID;
 }

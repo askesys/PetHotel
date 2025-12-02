@@ -12,8 +12,8 @@ private:
     int weight;
 
 public:
-    Cat(const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight);
-    Cat(int ID, const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight);
+    Cat(const string &name, const string &birthDate, const string &breed, int weight);
+    Cat(int ID, const string &name, const string &birthDate, const string &breed, int weight);
 
     ~Cat() override;
 

@@ -72,14 +72,72 @@ void ReservationsFH::Write(Reservation *reservation) {
     int animalsSize = animals.size();
     for (int i = 0; i < animalsSize; i++) {
         file << animals[i]->GetID();
-        if (i == animalsSize - 1) {
-            file << ",";
-        }
-        else {
+        if (i != animalsSize - 1) {
             file << ":";
         }
     }
+    file << ",";
     file << reservation->GetPutTogether() << endl;
 
     file.close();
+}
+
+void ReservationsFH::WriteAll(vector<Reservation *> reservations) {
+    ofstream file{this->path, ios::out};
+
+    if (!file) {
+        cerr << this->name << " cannot be opened for writing" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    for (auto reservation : reservations) {
+        file << reservation->GetID() << ",";
+        file << reservation->GetStartDate() << ",";
+        file << reservation->GetEndDate() << ",";
+        vector<Animal*> animals = reservation->GetAnimals();
+        int animalsSize = animals.size();
+        for (int i = 0; i < animalsSize; i++) {
+            file << animals[i]->GetID();
+            if (i != animalsSize - 1) {
+                file << ":";
+            }
+        }
+        file << ",";
+        file << reservation->GetPutTogether() << endl;
+    }
+
+    file.close();
+}
+
+
+void ReservationsFH::Delete(Reservation *reservation) {
+    int reservationID{reservation->GetID()};
+    ifstream rfile{this->path, ios::binary};
+
+    if (!rfile) {
+        cerr << this->name << " cannot be opened for reading" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    string data((istreambuf_iterator<char>(rfile)),istreambuf_iterator<char>());
+
+    rfile.close();
+
+    istringstream iss(data);
+    ofstream wfile{this->path, ios::app};
+    string line;
+
+    if (!wfile) {
+        cerr << this->name << " cannot be opened for writing" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    while (getline(iss, line)) {
+        int id = stoi(line.substr(0, line.find(",")));
+        if (id != reservationID) {
+            wfile << line << endl;
+        }
+    }
+
+    wfile.close();
 }

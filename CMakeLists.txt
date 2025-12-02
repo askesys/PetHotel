@@ -26,4 +26,14 @@ add_executable(PetHotel main.cpp
         Files/ReservationsFH.h
         Files/KennelsFH.cpp
         Files/KennelsFH.h
+        Animals/AnimalFilter.cpp
+        Animals/AnimalFilter.h
+        Logic/Date.cpp
+        Logic/Date.h
+        Logic/DatePeriod.cpp
+        Logic/DatePeriod.h
+        Logic/Booking.cpp
+        Logic/Booking.h
+        Logic/BookingEntry.cpp
+        Logic/BookingEntry.h
 )

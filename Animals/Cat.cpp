@@ -8,14 +8,14 @@
 
 using namespace std;
 
-Cat::Cat(const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight):
-    Animal(name, birthDate, breed, careSchedule), weight(weight)
+Cat::Cat(const string &name, const string &birthDate, const string &breed, int weight):
+    Animal(name, birthDate, breed), weight(weight)
 {
     IDManager::NewID("Cat");
 }
 
-Cat::Cat(int ID, const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight):
-    Animal(name, birthDate, breed, careSchedule), weight(weight)
+Cat::Cat(int ID, const string &name, const string &birthDate, const string &breed,  int weight):
+    Animal(name, birthDate, breed), weight(weight)
 {
     this->ID = ID;
 }

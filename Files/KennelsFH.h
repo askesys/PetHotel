@@ -21,6 +21,9 @@ private:
 public:
     vector<Kennel*> Read(map<int, Animal*> *animalsMap);
     void Write(Kennel* kennel);
+    void WriteAll(vector<Kennel*> kennels);
+    void Delete(Kennel* kennel);
+    void Update(Kennel* kennel);
 };
 
 

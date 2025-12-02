@@ -13,8 +13,8 @@ private:
     string rodentType;
 
 public:
-    Rodent(const string &name, const string &birthDate, const string &breed, const string& careSchedule, const string& rodentType);
-    Rodent(int ID, const string &name, const string &birthDate, const string &breed, const string& careSchedule, const string& rodentType);
+    Rodent(const string &name, const string &birthDate, const string &breed,  const string& rodentType);
+    Rodent(int ID, const string &name, const string &birthDate, const string &breed, const string& rodentType);
 
     ~Rodent() override;
 

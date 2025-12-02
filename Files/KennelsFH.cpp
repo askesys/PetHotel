@@ -61,7 +61,7 @@ void KennelsFH::Write(Kennel *kennel) {
     ofstream file{this->path, ios::app};
 
     if (!file) {
-        cerr << this->path << " cannot be opened for writing" << endl;
+        cerr << this->name << " cannot be opened for writing" << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -73,14 +73,121 @@ void KennelsFH::Write(Kennel *kennel) {
     int animalsSize = animals.size();
     for (int i = 0; i < animalsSize; i++) {
         file << animals[i]->GetID();
-        if (i == animalsSize - 1) {
-            file << ",";
-        }
-        else {
+        if (i != animalsSize - 1) {
             file << ":";
         }
     }
+    file << ",";
     file << kennel->GetIsEmpty() << endl;
 
     file.close();
 }
+
+void KennelsFH::WriteAll(vector<Kennel *> kennels) {
+    ofstream file{this->path, ios::out};
+
+    if (!file) {
+        cerr << this->name << " cannot be opened for writing" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    for (auto kennel : kennels) {
+        file << kennel->GetID() << ",";
+        file << kennel->GetSize() << ",";
+        file << kennel->GetCapacity() << ",";
+        file << kennel->GetType() << ",";
+        vector<Animal*> animals = kennel->GetAnimals();
+        int animalsSize = animals.size();
+        for (int i = 0; i < animalsSize; i++) {
+            file << animals[i]->GetID();
+            if (i != animalsSize - 1) {
+                file << ":";
+            }
+        }
+        file << ",";
+        file << kennel->GetIsEmpty() << endl;
+    }
+
+    file.close();
+}
+
+
+void KennelsFH::Delete(Kennel *kennel) {
+    int kennelID{kennel->GetID()};
+    ifstream rfile{this->path, ios::binary};
+
+    if (!rfile) {
+        cerr << this->name << " cannot be opened for reading" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    string data((istreambuf_iterator<char>(rfile)),istreambuf_iterator<char>());
+
+    rfile.close();
+
+    istringstream iss(data);
+    ofstream wfile{this->path, ios::app};
+    string line;
+
+    if (!wfile) {
+        cerr << this->name << " cannot be opened for writing" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    while (getline(iss, line)) {
+        int id = stoi(line.substr(0, line.find(",")));
+        if (id != kennelID) {
+            wfile << line << endl;
+        }
+    }
+
+    wfile.close();
+}
+
+void KennelsFH::Update(Kennel *kennel) {
+    int kennelID{kennel->GetID()};
+    ifstream rfile{this->path, ios::binary};
+
+    if (!rfile) {
+        cerr << this->name << " cannot be opened for reading" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    string data((istreambuf_iterator<char>(rfile)),istreambuf_iterator<char>());
+
+    rfile.close();
+
+    istringstream iss(data);
+    ofstream wfile{this->path, ios::app};
+    string line;
+
+    if (!wfile) {
+        cerr << this->name << " cannot be opened for writing" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    while (getline(iss, line)) {
+        int id = stoi(line.substr(0, line.find(",")));
+        if (id != kennelID) {
+            wfile << line << endl;
+        }else {
+            wfile << kennel->GetID() << ",";
+            wfile << kennel->GetSize() << ",";
+            wfile << kennel->GetCapacity() << ",";
+            wfile << kennel->GetType() << ",";
+            vector<Animal*> animals = kennel->GetAnimals();
+            int animalsSize = animals.size();
+            for (int i = 0; i < animalsSize; i++) {
+                wfile << animals[i]->GetID();
+                if (i != animalsSize - 1) {
+                    wfile << ":";
+                }
+            }
+            wfile << ",";
+            wfile << kennel->GetIsEmpty() << endl;
+        }
+    }
+
+    wfile.close();
+}
+

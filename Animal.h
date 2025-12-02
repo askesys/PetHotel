@@ -21,7 +21,7 @@ protected:
     int ID;
 
 public:
-    Animal(const string &name, const string &birthDate, const string &breed, const string &careSchedule);
+    Animal(const string &name, const string &birthDate, const string &breed);
 
     virtual ~Animal();
 
@@ -33,13 +33,15 @@ public:
     void SetBreed(const string&);
     int GetID() const;
     void SetID(int);
-    virtual void MakeSound();
-    virtual string GetType();
+    virtual void MakeSound() = 0;
+    virtual string GetType() = 0;
     int CalculateAge() const;
     string GetCareSchedule() const;
     void SetCareSchedule(const string&);
 
     static string CarvinoresWeightToSize(int weight);
+    static string RecommendCareSchedule(const string& type, int weight);
+    static string RecommendCareSchedule(const string& type, const string& rodentType);
 };
 
 

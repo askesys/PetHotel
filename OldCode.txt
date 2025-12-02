@@ -58,3 +58,78 @@
 
         Reservation* reservation = new Reservation(IDManager::NewID("Reservation"),"06/11/2025", "08/11/2025", dogs, putTogether);
         petHotel.AddReservation(reservation);
+
+vector<Kennel*> PetHotel::ChooseCarnivoreKennel(const string &type, const string &size, bool putTogether) {
+    vector<Kennel*> result;
+
+    if (!putTogether) {
+        for (int i = 0; i < this->kennels.size(); i++) {
+            if (kennels[i]->GetSize() == size && kennels[i]->GetIsEmpty() == true) {
+                result.push_back(kennels[i]);
+            }
+        }
+
+        sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {return a->GetCapacity() < b->GetCapacity();});
+    }
+
+    if (putTogether) {
+        for (int i = 0; i < this->kennels.size(); i++) {
+            if (kennels[i]->GetSize() == size && (kennels[i]->GetType() == type || kennels[i]->GetType() == "NULL") && kennels[i]->CheckAvailability())
+            {
+                result.push_back(kennels[i]);
+            }
+        }
+
+        sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {
+            if (a->GetIsEmpty() != b->GetIsEmpty())
+                return a->GetIsEmpty() < b->GetIsEmpty();
+            return a->GetFreeSpots() < b->GetFreeSpots();
+        });
+    }
+
+
+    return result;
+}
+
+vector<Kennel *> PetHotel::ChooseRodentKennel(const string &rodentType, bool putTogether) {
+    vector<Kennel*> result;
+
+    if (!putTogether) {
+        for (int i = 0; i < this->kennels.size(); i++) {
+            if (kennels[i]->GetType() == rodentType && kennels[i]->GetIsEmpty() == true) {
+                result.push_back(kennels[i]);
+            }
+        }
+
+        sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {return a->GetCapacity() < b->GetCapacity();});
+    }
+
+    if (putTogether) {
+        for (int i = 0; i < this->kennels.size(); i++) {
+            if ((kennels[i]->GetType() == rodentType || kennels[i]->GetType() == "NULL") && kennels[i]->CheckAvailability())
+            {
+                result.push_back(kennels[i]);
+            }
+        }
+
+        sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {
+            if (a->GetIsEmpty() != b->GetIsEmpty())
+                return a->GetIsEmpty() < b->GetIsEmpty();
+            return a->GetFreeSpots() < b->GetFreeSpots();
+        });
+    }
+
+
+    return result;
+}
+
+
+if (!putTogether || size == "Large") {
+        for (int i = 0; i < this->kennels.size(); i++) {
+            if (kennels[i]->GetSize() == size && (kennels[i]->GetType() == "Dog" || kennels[i]->GetType() == "NULL")) {
+                result.push_back(kennels[i]);
+            }
+        }
+        result = booking.FindAvailableKennels(result, datePeriod);
+        sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {return a->GetCapacity() < b->GetCapacity();});
+        return result;

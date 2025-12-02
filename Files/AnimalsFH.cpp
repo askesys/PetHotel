@@ -86,3 +86,40 @@ void AnimalsFH::Write(Animal* animal) {
     file.close();
 
 }
+
+void AnimalsFH::WriteAll(vector<Animal *> animals) {
+    ofstream file{this->path, ios::out};
+
+    if (!file) {
+        cerr << this->name << " cannot be opened for writing" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    for (auto animal : animals) {
+        string animal_type = animal->GetType();
+
+        file << animal->GetID() << ",";
+        file << animal_type << ",";
+        file << animal->GetName() << ",";
+        file << animal->GetBirthDate() << ",";
+        file << animal->GetBreed() << ",";
+        file << animal->GetCareSchedule() << ",";
+
+        if (animal_type == "Dog") {
+            file << static_cast<Dog*>(animal)->GetWeight() << ",";
+            file << "NULL" << endl;
+        }
+        else if (animal_type == "Cat") {
+            file << static_cast<Cat*>(animal)->GetWeight() << ",";
+            file << "NULL" << endl;
+        }
+        else if (animal_type == "Rodent") {
+            file << "NULL" << ",";
+            file << static_cast<Rodent*>(animal)->GetRodentType() << endl;
+        }
+    }
+
+    file.close();
+}
+
+

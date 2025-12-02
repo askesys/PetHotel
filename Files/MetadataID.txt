@@ -1,5 +1,5 @@
 Reservation 1
-Kennel 1
+Kennel 110
 Dog 1002
 Cat 2000
 Rodent 3001

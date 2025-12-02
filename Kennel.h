@@ -34,11 +34,14 @@ public:
     vector<Animal*> GetAnimals() const;
     void SetAnimals(vector<Animal*> animals);
     void AddAnimal(Animal* animal);
+
     bool GetIsEmpty();
     void SetIsEmpty(bool isEmpty);
     int GetID() const;
     void SetID(int ID);
     bool CheckAvailability();
+    int GetTakenSpots() const;
+    int GetFreeSpots() const;
 };
 
 

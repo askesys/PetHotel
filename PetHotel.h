@@ -7,9 +7,15 @@
 #include "Animal.h"
 #include "Reservation.h"
 #include "Kennel.h"
+#include "Animals/AnimalFilter.h"
 #include "Files/AnimalsFH.h"
 #include "Files/KennelsFH.h"
 #include "Files/ReservationsFH.h"
+#include "Animals/Dog.h"
+#include "Animals/Cat.h"
+#include "Animals/Rodent.h"
+#include "Logic/Booking.h"
+#include "Logic/DatePeriod.h"
 
 using namespace std;
 
@@ -27,6 +33,7 @@ private:
     map<int, Animal*> animalsMap;
     ReservationsFH reservationsFH;
     KennelsFH kennelsFH;
+    Booking booking;
 
 public:
     PetHotel();
@@ -39,17 +46,23 @@ public:
     vector<Animal*> GetAnimals() const;
     void SetAnimals(vector<Animal*>);
     void AddAnimal(Animal* animal);
+    Animal* AddAnimal(const string& type, const string& name, const string& birthDate, const string& breed, int weight);
+    Animal* AddAnimal(const string& type, const string& name, const string& birthDate, const string& breed, const string& rodentType);
     vector<Kennel*> GetKennels() const;
     void SetKennels(vector<Kennel*>);
+    void AddKennel(Kennel* kennel);
+    void RemoveKennel(Kennel* kennel);
     vector<Reservation*> GetReservations() const;
     void SetReservations(vector<Reservation*>);
     void AddReservation(Reservation*);
-
-    Kennel* ChooseKennel(int);
-    Kennel* ChooseKennel(const string &size, const string &type, bool putTogether);
-    void ListKannels();
-    void ListReservations();
-    void ListAnimals();
+    Animal* FindAnimal(int id);
+    Kennel* FindKennel(int id);
+    vector<Kennel*> ChooseKennels(Animal* animal, bool putTogether, DatePeriod datePeriod);
+    void DisplayKennels();
+    void DisplayKennels(vector<Kennel*> sliced_kennels);
+    void DisplayReservations();
+    void DisplayAnimals();
+    void DisplayAnimals(vector<Animal*> sliced_animals);
 };
 
 #endif //PETHOTEL_H

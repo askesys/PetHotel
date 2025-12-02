@@ -3,9 +3,10 @@
 //
 
 #include "Kennel.h"
+#include "Animals/Rodent.h"
 
 Kennel::Kennel(int ID, const string& size, int capacity, bool isEmpty):
-    ID(ID), size(size), capacity(capacity), isEmpty(isEmpty), type("NA"){}
+    ID(ID), size(size), capacity(capacity), isEmpty(isEmpty), type("NULL"){}
 
 Kennel::Kennel(int ID, const string& size, int capacity, const string& type, bool isEmpty, vector<Animal*> animals):
     ID(ID), size(size), capacity(capacity), type(type), isEmpty(isEmpty), animals(animals){}
@@ -61,16 +62,33 @@ void Kennel::SetID(int ID) {
     this->ID = ID;
 }
 
-/*
+
 bool Kennel::CheckAvailability() {
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if (this->animals.size() < this->GetCapacity()) {
+        return true;
+    }
+
+    return false;
 }
-*/
 
 void Kennel::AddAnimal(Animal* animal) {
     this->animals.push_back(animal);
     this->isEmpty = false;
-    if (this->type == "NA") {
-        this->type = animal->GetType();
+    if (this->type == "NULL") {
+        if (typeid(*animal) == typeid(Rodent)) {
+            this->type = dynamic_cast<Rodent*>(animal)->GetRodentType();
+        }
+        else {
+            this->type = animal->GetType();
+        }
     }
+}
+
+int Kennel::GetTakenSpots() const {
+    return GetAnimals().size();
+}
+
+
+int Kennel::GetFreeSpots() const{
+    return GetCapacity()-GetAnimals().size();
 }

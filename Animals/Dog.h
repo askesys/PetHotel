@@ -14,8 +14,8 @@ private:
     int weight = -1;
 
 public:
-    Dog(const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight);
-    Dog(int ID, const string &name, const string &birthDate, const string &breed, const string &careSchedule, int weight);
+    Dog(const string &name, const string &birthDate, const string &breed, int weight);
+    Dog(int ID, const string &name, const string &birthDate, const string &breed, int weight);
 
     ~Dog() override;
 
