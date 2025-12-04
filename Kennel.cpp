@@ -3,6 +3,9 @@
 //
 
 #include "Kennel.h"
+
+#include "Animals/Dog.h"
+#include "Animals/Cat.h"
 #include "Animals/Rodent.h"
 
 Kennel::Kennel(int ID, const string& size, int capacity, bool isEmpty):
@@ -46,6 +49,19 @@ void Kennel::SetAnimals(vector<Animal*> animals) {
     this->animals = animals;
 }
 
+void Kennel::AddAnimal(Animal* animal) {
+    this->animals.push_back(animal);
+    this->isEmpty = false;
+    if (this->type == "NULL") {
+        if (typeid(*animal) == typeid(Rodent)) {
+            this->type = dynamic_cast<Rodent*>(animal)->GetRodentType();
+        }
+        else {
+            this->type = animal->GetType();
+        }
+    }
+}
+
 bool Kennel::GetIsEmpty() {
     return this->isEmpty;
 }
@@ -63,32 +79,28 @@ void Kennel::SetID(int ID) {
 }
 
 
-bool Kennel::CheckAvailability() {
-    if (this->animals.size() < this->GetCapacity()) {
-        return true;
+
+int Kennel::KennelSizeToSpace(const string &size) {
+    if (size == "Large" || size == "Mini") {
+        return 4;
     }
-
-    return false;
-}
-
-void Kennel::AddAnimal(Animal* animal) {
-    this->animals.push_back(animal);
-    this->isEmpty = false;
-    if (this->type == "NULL") {
-        if (typeid(*animal) == typeid(Rodent)) {
-            this->type = dynamic_cast<Rodent*>(animal)->GetRodentType();
-        }
-        else {
-            this->type = animal->GetType();
-        }
+    else if (size == "Medium") {
+        return 2;
+    }
+    else if (size == "Small") {
+        return 1;
+    }
+    else if (size == "NULL") {
+        return 0;
+    }
+    else {
+        throw runtime_error("Kennel::KennelSizeToSpace(): Unknown size");
     }
 }
 
-int Kennel::GetTakenSpots() const {
-    return GetAnimals().size();
+
+int Kennel::GetFullSpace() const {
+    return KennelSizeToSpace(this->size);
 }
 
 
-int Kennel::GetFreeSpots() const{
-    return GetCapacity()-GetAnimals().size();
-}

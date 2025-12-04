@@ -42,6 +42,9 @@ public:
     static string CarvinoresWeightToSize(int weight);
     static string RecommendCareSchedule(const string& type, int weight);
     static string RecommendCareSchedule(const string& type, const string& rodentType);
+    static int AnimalSizeToSpace(const string& size);
+    static int WeightToSpace(int weight);
+    virtual int GetSpace() const = 0;
 };
 
 

@@ -1,4 +1,6 @@
-﻿ID,Type,Name,BirthDate,Breed,CareSchedule,Weight,RodentType
-1001,Dog,Mihai,08/10/2003,Chihuahua,Everyday care,65,NULL
-3001,Rodent,Nikita,17/01/2000,White Ukrainian,Every other day,NULL,Mouse
-1002,Dog,Jack,19/02/2018,Terrier,Everyday,43,NULL
+ID,Type,Name,BirthDate,Breed,CareSchedule,Weight,RodentType
+1001,Dog,Mihai,08/10/2003,Chihuahua,Should be walked several times a day,53,NULL
+1002,Dog,Kudsi,11/01/1998,Buldog,Should be walked several times a day,90,NULL
+1003,Dog,Mert,13/03/2001,Spaniel,Should be walked several times a day,78,NULL
+1004,Dog,Velimir,10/09/2004,Shepard,Should be walked several times a day,80,NULL
+1005,Dog,Simona,06/07/2005,Chihuahua,Should be walked several times a day,67,NULL

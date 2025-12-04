@@ -42,7 +42,7 @@ Animal* RegisterAnimal(PetHotel& petHotel) {
         cout << "Enter weight of animal: ";
         cin >> weight;
         cin.get();
-        cout << "Recommended care schedule: " << Animal::RecommendCareSchedule("Dog", weight);
+        cout << "Recommended care schedule: " << Animal::RecommendCareSchedule("Dog", weight) << endl;
         cout << "Write your care schedule: ";
         getline(cin, careSchedule);
 
@@ -54,24 +54,24 @@ Animal* RegisterAnimal(PetHotel& petHotel) {
         cout << "Enter weight of animal: ";
         cin >> weight;
         cin.get();
-        cout << "Recommended care schedule: " << Animal::RecommendCareSchedule("Cat", weight);
+        cout << "Recommended care schedule: " << Animal::RecommendCareSchedule("Cat", weight) << endl;
         cout << "Write your care schedule: ";
         getline(cin, careSchedule);
 
         animal = petHotel.AddAnimal("Cat", name, birthDate, bread, weight);
         animal->SetCareSchedule(careSchedule);
-        cout << "Your dog was succesfully added to our Pet Hotel. Its ID is " << animal->GetID() << endl;
+        cout << "Your cat was succesfully added to our Pet Hotel. Its ID is " << animal->GetID() << endl;
     }
     else if (animalType == 3) {
         cout << "Enter type of your rodent: ";
         getline(cin, rodentType);
-        cout << "Recommended care schedule: " << Animal::RecommendCareSchedule("Rodent", rodentType);
+        cout << "Recommended care schedule: " << Animal::RecommendCareSchedule("Rodent", rodentType) << endl;
         cout << "Write your care schedule: ";
         getline(cin, careSchedule);
 
         animal = petHotel.AddAnimal("Rodent", name, birthDate, bread, rodentType);
         animal->SetCareSchedule(careSchedule);
-        cout << "Your dog was succesfully added to our Pet Hotel. Its ID is " << animal->GetID() << endl;
+        cout << "Your " << rodentType <<  " was succesfully added to our Pet Hotel. Its ID is " << animal->GetID() << endl;
     }
 
     return animal;
@@ -79,55 +79,74 @@ Animal* RegisterAnimal(PetHotel& petHotel) {
 }
 
 void SelectAnimalSequence(PetHotel& petHotel, vector<Animal*>& sequence) {
-    int chooseAnimalSelectionOption{-1}, chooseListOption{-1};
+    int chooseAnimalSelectionOption;
 
-    while (chooseAnimalSelectionOption < 0 || chooseAnimalSelectionOption > 4) {
-        cout << "Checking whether animal can be accomodated.";
-        cout << "\t" << "1. Enter animal's ID";
-        cout << "\t" << "2. Find an animal by name";
-        cout << "\t" << "3. Add an animal";
-        cout << "\t" << "0. Exit";
-        cout << "Choose an option: ";
-        cin >> chooseAnimalSelectionOption;
-        cin.get();
-    }
+    cout << "Checking whether animal can be accommodated.\n";
+    cout << "1. Enter animal's ID\n";
+    cout << "2. Find an animal by name\n";
+    cout << "3. Add an animal\n";
+    cout << "0. Exit\n";
+    cout << "Choose an option: ";
 
+    cin >> chooseAnimalSelectionOption;
 
     switch (chooseAnimalSelectionOption) {
         case 0:
-            return;
-        case 1:
+            // Exit
+            break;
+
+        case 1: { // Case 1 scope
             int animalID;
             cout << "Enter ID of your animal: ";
             cin >> animalID;
             cin.get();
+
             Animal* animal = petHotel.FindAnimal(animalID);
             if (animal != nullptr) {
                 sequence.push_back(animal);
-                cout << "Your " << animal->GetType() << " " << animal->GetID() << " is added to sequence" << endl;
+                cout << "Your " << animal->GetType() << " " << animal->GetID() << " is added to sequence.\n";
+            } else {
+                throw runtime_error("Animal not found");
             }
-            else throw runtime_error("Animal not found");
             break;
-        case 2:
+        }
+
+        case 2: { // Case 2 scope
             string animalName;
-            cout << "Enter ID of your animal: ";
-            cin >> animalID;
+            cout << "Enter name of your animal: ";
+            cin >> animalName;
             cin.get();
-            AnimalFilter animalFilter({{AnimalKey::Name,animalName}});
+
+            AnimalFilter animalFilter({{AnimalKey::Name, animalName}});
             auto filteredAnimals = petHotel.GetAnimals();
             animalFilter.Filter(filteredAnimals);
+
+            if (filteredAnimals.empty()) {
+                cout << "No animals found with that name.\n";
+                break;
+            }
+
             petHotel.DisplayAnimals(filteredAnimals);
-            while (chooseListOption < 0 && chooseListOption > filteredAnimals.size()) {
+
+            int chooseListOption{-1};
+            while (chooseListOption < 0 || chooseListOption >= filteredAnimals.size()) {
                 cout << "Choose an option: ";
                 cin >> chooseListOption;
                 cin.get();
             }
+
             sequence.push_back(filteredAnimals[chooseListOption]);
-            cout << "Your " << filteredAnimals[chooseListOption]->GetType() << " ";
-            cout << filteredAnimals[chooseListOption]->GetID() << " is added to sequence" << endl;
+            cout << "Your " << filteredAnimals[chooseListOption]->GetType() << " "
+                 << filteredAnimals[chooseListOption]->GetID() << " is added to sequence.\n";
             break;
+        }
+
         case 3:
             sequence.push_back(RegisterAnimal(petHotel));
+            break;
+
+        default:
+            throw runtime_error("Invalid option selected");
     }
 }
 
@@ -136,16 +155,7 @@ void MakeReservation(PetHotel& petHotel) {
     int chooseKennelManually{-1};
     vector<Animal*> sequence;
     vector<Kennel*> kennels;
-
-    while (addMoreAnimals) {
-        SelectAnimalSequence(petHotel, sequence);
-        cout << "Do you want to add another animal (0 - false / 1 - true): ";
-        int addAnother{-1};
-        while (addAnother < 0 || addAnother > 1) {
-            cin >> addAnother;
-        }
-        if (addAnother == 0) addMoreAnimals = false;
-    }
+    Reservation* reservation{nullptr};
 
     string startDate, endDate;
     int isPutTogetherInt{-1};
@@ -161,47 +171,88 @@ void MakeReservation(PetHotel& petHotel) {
     Date eDate(endDate);
 
     DatePeriod datePeriod(sDate, eDate);
+
     while (isPutTogetherInt < 0 || isPutTogetherInt > 1) {
-        cout << "Should your animals be put together with other animals (y/n): ";
+        cout << "Should your animals be put together with other animals (1 - yes / 0 - no ): ";
         cin >> isPutTogetherInt;
         cin.get();
     }
     bool isPutTogether = static_cast<bool>(isPutTogetherInt);
-    for (Animal* animal : sequence) {
-        kennels = petHotel.ChooseKennels(animal, isPutTogether, datePeriod);
-        if (kennels.size() == 0) {
+
+    while (addMoreAnimals) {
+        SelectAnimalSequence(petHotel, sequence);
+
+        if (sequence.size() == 0) break;
+
+        Animal* animal = sequence.back();
+        vector<BookingData> bd = petHotel.AutoChooseKennels(animal, isPutTogether, datePeriod);
+        if (bd.size() == 0) {
             cout << "Animal " << animal->GetName() << " cannot be accommodated in any kennel!" << endl;
+        }else {
+            while (chooseKennelManually < 0 || chooseKennelManually > 2){
+                cout << "Choose an option: " << endl;
+                cout << "\t" << "1. Agree for putting put in:" << endl;
+                for (auto bdone: bd) {
+                    cout << "\t" << "Kennel ID: " << bdone.kennelID;
+                    cout << " from " << bdone.startDate.toString();
+                    cout << " to " << bdone.endDate.toString() << endl;
+                }
+                cout << "\t" << "2. Choose kennel manually" << endl;
+                cin >> chooseKennelManually;
+                cin.get();
+            }
+            if (chooseKennelManually == 1) {
+                petHotel.AddReservation(startDate, endDate, isPutTogether, animal);
+                for (auto bdone: bd) {
+                    petHotel.AddBooking(animal, bdone.kennelID, DatePeriod(bdone.startDate, bdone.endDate));
+                }
+            }
+            else if (chooseKennelManually == 2) {
+                petHotel.DisplayKennels(kennels);
+                cout << "Choose an option: ";
+                int option{-1};
+                cin >> option;
+                cin.get();
+            }
         }
-        while (chooseKennelManually < 0 || chooseKennelManually > 1){
-            cout << "Choose an option: " << endl;
-            cout << "\t" << "1. Choose kennel manually" << endl;
-            cout << "\t" << "2. Agree: put in " << kennels[0]->GetID() << " kennel" << endl;
+
+
+        cout << "Do you want to add another animal (0 - false / 1 - true): ";
+        int addAnother{-1};
+        while (addAnother < 0 || addAnother > 1) {
+            cin >> addAnother;
         }
+        if (addAnother == 0) addMoreAnimals = false;
+
+
     }
+
+
 
 }
 
 
 
 void InitKennels(PetHotel& petHotel) {
-    default_random_engine engine{static_cast<unsigned int>(time(0))};
-    uniform_int_distribution<int> distribution{3,8};
+    //default_random_engine engine{static_cast<unsigned int>(time(0))};
+    //uniform_int_distribution<int> distribution{3,8}; used earlier for dynamic capacity
 
     //large
-    for (int i = 0; i < 10; i++) {
-        Kennel* kennel = new Kennel(IDManager::NewID("Kennel"),"Large", distribution(engine), true);
+    for (int i = 0; i < 2; i++) {
+        Kennel* kennel = new Kennel(IDManager::NewID("Kennel"),"Large", 4, true);
         petHotel.AddKennel(kennel);
     }
 
+    /*
     //medium
     for (int i = 0; i < 20; i++) {
-        Kennel* kennel = new Kennel(IDManager::NewID("Kennel"),"Medium", distribution(engine), true);
+        Kennel* kennel = new Kennel(IDManager::NewID("Kennel"),"Medium", 4, true);
         petHotel.AddKennel(kennel);
     }
 
     //small
     for (int i = 0; i < 50; i++) {
-        Kennel* kennel = new Kennel(IDManager::NewID("Kennel"),"Small", distribution(engine), true);
+        Kennel* kennel = new Kennel(IDManager::NewID("Kennel"),"Small", 4, true);
         petHotel.AddKennel(kennel);
     }
 
@@ -211,22 +262,35 @@ void InitKennels(PetHotel& petHotel) {
         petHotel.AddKennel(kennel);
     }
 
+    */
+
 }
 
 int main() {
     PetHotel petHotel;
-
     //InitKennels(petHotel);
 
-    //MakeReservation(petHotel);
+    int choice{-1};
 
-    //RegisterAnimal(petHotel);
+    while (choice < 0 || choice > 10) {
+        cout << "===================== MENU ====================" << endl;
+        cout << "0. Exit" << endl;
+        cout << "1. Register an animal" << endl;
+        cout << "2. Make an reservation" << endl;
+        cout << "3. Display all animals" << endl;
+        cout << "4. Display all reservations" << endl;
+        cout << "5. Display all kennels" << endl;
+        cout << "Choose an option: ";
+        cin >> choice;
+        cin.get();
 
-    petHotel.DisplayKennels();
-    //petHotel.DisplayReservations();
-    AnimalFilter animalFilter({{AnimalKey::Type,"Dog"}});
-    //petHotel.DisplayAnimals(animalFilter);
-
+        if (choice == 0) return 0;
+        else if (choice == 1) RegisterAnimal(petHotel);
+        else if (choice == 2) MakeReservation(petHotel);
+        else if (choice == 3) petHotel.DisplayAnimals();
+        else if (choice == 4) petHotel.DisplayReservations();
+        else if (choice == 5) petHotel.DisplayKennels();
+    }
 
     return 0;
 }

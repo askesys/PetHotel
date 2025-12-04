@@ -5,10 +5,20 @@
 #include "Reservation.h"
 #include<string>
 
+#include "IDManager.h"
+
 using namespace std;
 
 Reservation::Reservation(int ID, const string &startDate, const string &endDate, const vector<Animal*> &animals, bool putTogether):
     ID(ID), startDate(startDate),endDate(endDate), animals(animals), putTogether(putTogether) {}
+
+Reservation::Reservation(const string &startDate, const string &endDate, bool putTogether, Animal *animal):
+startDate(startDate),endDate(endDate), putTogether(putTogether)
+{
+    SetID(IDManager::NewID("Reservation"));
+    AddAnimal(animal);
+}
+
 
 Reservation::~Reservation() {}
 
@@ -36,6 +46,11 @@ vector<Animal *> Reservation::GetAnimals() const {
 void Reservation::SetAnimals(const vector<Animal*> animals) {
     this->animals = animals;
 }
+
+void Reservation::AddAnimal(Animal *animal) {
+    this->animals.push_back(animal);
+}
+
 
 bool Reservation::GetPutTogether() const {
     return this->putTogether;

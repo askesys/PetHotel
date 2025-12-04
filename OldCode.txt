@@ -132,4 +132,197 @@ if (!putTogether || size == "Large") {
         }
         result = booking.FindAvailableKennels(result, datePeriod);
         sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {return a->GetCapacity() < b->GetCapacity();});
+
         return result;
+
+
+
+void Booking::GenerateBookingCalendar(vector<Kennel *> kennels) {
+    const int KENNELS_COUNT = kennels.size();
+    int countDays = 0;
+
+    int id = 0;
+    for (Kennel *kennel : kennels) {
+        mapKennelID[kennel->GetID()] = id;
+    }
+
+    vector<int> bookDays;
+    vector<int> occupiedKennels;
+    for (int i = 0; i < BOOKING_PERIOD; i++) {
+        bookDays.push_back(BOOKING_PERIOD - i);
+    }
+
+    for (int j = 0; j < KENNELS_COUNT; j++) {
+        availableKennels.push_back(bookDays);
+    }
+}
+
+void Booking::GenerateAccommodationCalendar(map<int, Animal*> animalMap) {
+    vector<int> initial_row(BOOKING_PERIOD, 0);
+    this->free_spaces = vector<vector<int>>(mapKennelID.size(), initial_row);
+
+    for (auto bookingEntry : this->bookingEntries) {
+        Animal* an = animalMap[bookingEntry->GetAnimalID()];
+        int knl = mapKennelID[bookingEntry->GetKennelID()];
+        int space = Kennel::CalculateAccommodatedSpace(an);
+        DatePeriod dp{Date(bookingEntry->GetStartDate()), Date(bookingEntry->GetEndDate())};
+        for (Date d : dp.toVector()) {
+            free_spaces[knl][d - beginDate] += space;
+        }
+    }
+}
+
+
+
+void Booking::BlockKennel(Kennel *kennel, DatePeriod datePeriod) {
+    int id = mapKennelID[kennel->GetID()];
+    for (Date date: datePeriod.toVector()) {
+        availableKennels[id][date - beginDate] = 0;
+    }
+    int target{-1}, left_step{1};
+    while (target != 0){
+        Date previous = datePeriod.getStart() - left_step;
+        if (previous < beginDate) break;
+        int shift = previous - beginDate;
+        target = availableKennels[id][shift];
+        if (target != 0) {
+            availableKennels[id][shift] = left_step;
+            left_step++;
+        }
+    }
+}
+
+vector<Kennel *> Booking::CheckFullBooking(std::vector<Kennel *> &kennels, DatePeriod datePeriod) {
+    vector<Kennel *> filteredKennels;
+
+    for (auto kennel: kennels) {
+        int id = mapKennelID[kennel->GetID()];
+        int date_s = datePeriod.getStart() - beginDate;
+        if (availableKennels[id][date_s] >= datePeriod.length()) {
+            filteredKennels.push_back(kennel);
+        }
+    }
+
+    return filteredKennels;
+}
+
+
+vector<Kennel *> Booking::CheckPossibleBookings(std::vector<Kennel*> &kennels, DatePeriod datePeriod, int requiredSpace) {
+    vector<Kennel *> filteredKennels;
+
+    kennels = CheckFullBooking(kennels, datePeriod);
+
+    for (auto kennel: kennels) {
+        int id = mapKennelID[kennel->GetID()];
+        bool enoughSpace = true;
+
+        for (Date d : datePeriod.toVector()) {
+            int date_s = d - beginDate;
+            if (free_spaces[id][date_s] + requiredSpace > kennel->GetFullSpace() ) enoughSpace = false;
+        }
+
+        if (enoughSpace) filteredKennels.push_back(kennel);
+    }
+
+    return filteredKennels;
+}
+
+// Sorting logic
+    if (putTogether) {
+        result = booking.CheckPossibleBookings(result, datePeriod, type == "Rodent" ? 1 : Kennel::AnimalSizeToSpace(size));
+        sort(result.begin(), result.end(),
+            [](Kennel* a, Kennel* b) {
+                if (a->GetIsEmpty() != b->GetIsEmpty())
+                    return a->GetIsEmpty() < b->GetIsEmpty();
+                return a->GetPercentAccomodation() > b->GetPercentAccomodation();
+            }
+        );
+    } else {
+        result = booking.CheckFullBooking(kennels, datePeriod);
+        sort(result.begin(), result.end(),
+            [](Kennel* a, Kennel* b) {
+                return Kennel::AnimalSizeToSpace(a->GetSize()) < Kennel::AnimalSizeToSpace(b->GetSize());
+            }
+        );
+    }
+
+
+
+int Kennel::GetAccommodatedSpace() const {
+    int accommodated_space = 0;
+    if (this->type == "Dog") {
+        for (Animal* animal : this->animals) {
+            accommodated_space += WeightToSpace(dynamic_cast<Dog*>(animal)->GetWeight());
+        }
+
+    }
+    else if (this->type == "Cat") {
+        for (Animal* animal : this->animals) {
+            accommodated_space += WeightToSpace(dynamic_cast<Cat*>(animal)->GetWeight());
+        }
+    }
+    else if (this->animals.size() > 0 && this->animals[0]->GetType() == "Rodent") {
+        accommodated_space = this->animals.size();
+    }
+    else if (this->type == "NULL") {
+        accommodated_space = 0;
+    }
+    else throw runtime_error("Kennel::WeightToSpace(): Uncorrect kennel type");
+
+    return accommodated_space;
+}
+
+int Kennel::CalculateAccommodatedSpace(Animal *animal) {
+    int accommodated_space = 0;
+
+    if (animal->GetType() == "Dog") {
+        accommodated_space += WeightToSpace(dynamic_cast<Dog*>(animal)->GetWeight());
+    }
+    else if (animal->GetType() == "Cat") {
+        accommodated_space += WeightToSpace(dynamic_cast<Cat*>(animal)->GetWeight());
+    }
+    else if (animal->GetType() == "Rodent") {
+        accommodated_space += 1;
+    }
+    else throw runtime_error("Kennel::CalculateAccommodatedSpace(): Uncorrect kennel type");
+
+    return accommodated_space;
+}
+
+
+
+int Kennel::CalculateAccommodatedSpace(vector<Animal *> animals) {
+    int accommodated_space = 0;
+    for (Animal* animal : animals) {
+        if (animal->GetType() == "Dog") {
+            accommodated_space += WeightToSpace(dynamic_cast<Dog*>(animal)->GetWeight());
+        }
+        else if (animal->GetType() == "Cat") {
+            accommodated_space += WeightToSpace(dynamic_cast<Cat*>(animal)->GetWeight());
+        }
+        else if (animal->GetType() == "Rodent") {
+            accommodated_space += 1;
+        }
+        else throw runtime_error("Kennel::CalculateAccommodatedSpace(): Uncorrect kennel type");
+    }
+
+    return accommodated_space;
+}
+
+float Kennel::GetPercentAccomodation() const {
+    return GetAccommodatedSpace() / capacity;
+}
+
+
+if (animal->GetType() == "Dog") {
+        return WeightToSpace(dynamic_cast<Dog*>(animal)->GetWeight()) + GetAccommodatedSpace() <= capacity;
+    }
+    else if (animal->GetType() == "Cat") {
+        return WeightToSpace(dynamic_cast<Cat*>(animal)->GetWeight()) + GetAccommodatedSpace() <= capacity;
+    }
+    else if (animal->GetType() == "Rodent") {
+        return GetAccommodatedSpace() + 1 <= capacity;
+    }
+    else {
+        throw runtime_error("Kennel::CheckAvailability: Invalid animal");
+    }

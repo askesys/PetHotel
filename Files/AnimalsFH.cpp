@@ -23,8 +23,7 @@ vector<Animal *> AnimalsFH::Read() {
         exit(EXIT_FAILURE);
     }
 
-    file >> line;
-
+    getline(file, line);
     while (getline(file, line)) {
         int index = 0;
        while ((delimeter = line.find(",")) != string::npos) {
@@ -35,15 +34,18 @@ vector<Animal *> AnimalsFH::Read() {
         values[index] = line;
 
         if (values[1] == "Dog") {
-            Dog* dog = new Dog(stoi(values[0]), values[2], values[3], values[4], values[5], stoi(values[6]));
+            Dog* dog = new Dog(stoi(values[0]), values[2], values[3], values[4], stoi(values[6]));
+            dog->SetCareSchedule(values[5]);
             animals.push_back(dog);
         }
         else if (values[1] == "Cat") {
-            Cat* cat = new Cat(stoi(values[0]), values[2], values[3], values[4], values[5], stoi(values[6]));
+            Cat* cat = new Cat(stoi(values[0]), values[2], values[3], values[4], stoi(values[6]));
+            cat->SetCareSchedule(values[5]);
             animals.push_back(cat);
         }
         else if (values[1] == "Rodent") {
-            Rodent* rodent = new Rodent(stoi(values[0]), values[2], values[3], values[4], values[5], values[7]);
+            Rodent* rodent = new Rodent(stoi(values[0]), values[2], values[3], values[4], values[7]);
+            rodent->SetCareSchedule(values[5]);
             animals.push_back(rodent);
         }
     }
@@ -94,6 +96,15 @@ void AnimalsFH::WriteAll(vector<Animal *> animals) {
         cerr << this->name << " cannot be opened for writing" << endl;
         exit(EXIT_FAILURE);
     }
+
+    file << "ID" << ",";
+    file << "Type" << ",";
+    file << "Name" << ",";
+    file << "BirthDate" << ",";
+    file << "Breed" << ",";
+    file << "CareSchedule" << ",";
+    file << "Weight" << ",";
+    file << "RodentType" << endl;
 
     for (auto animal : animals) {
         string animal_type = animal->GetType();

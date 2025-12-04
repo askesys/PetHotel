@@ -19,8 +19,10 @@ private:
     vector<Animal*> animals;
     bool putTogether;
     bool IsDurationValid() const;
+
 public:
     Reservation(int ID, const string& startDate, const string& endDate, const vector<Animal*>& animals, bool putTogether);
+    Reservation(const string& startDate, const string& endDate, bool putTogether, Animal* animal);
     ~Reservation();
 
     string GetStartDate() const;
@@ -29,6 +31,7 @@ public:
     void SetEndDate(const string&);
     vector<Animal*> GetAnimals() const;
     void SetAnimals(vector<Animal*>);
+    void AddAnimal(Animal* animal);
     bool GetPutTogether() const;
     void SetPutTogether(bool);
     int GetID() const;

@@ -22,7 +22,7 @@ PetHotel::PetHotel() {
     SetReservations(reservationsFH.Read(&animalsMap));
     SetKennels(kennelsFH.Read(&animalsMap));
     IDManager::Read();
-    booking = Booking(kennels,reservations);
+    booking.GenerateBookingCalendar(kennels,animalsMap);
 }
 
 PetHotel::~PetHotel() {
@@ -79,40 +79,42 @@ void PetHotel::AddAnimal(Animal* animal) {
     animalsMap[animal->GetID()] = animal;
 }
 
-Animal *PetHotel::AddAnimal(const string &type, const string &name, const string &birthDate, const string &breed, int weight) {
-    switch (type) {
-        case "Dog":
-            Dog* dog = new Dog(name, birthDate, breed,  weight);
-            this->animals.push_back(dog);
-            animalsFH.Write(dog);
-            animalsMap[dog->GetID()] = dog;
-            return dog;
-        case "Cat":
-            Cat* cat = new Cat(name, birthDate, breed, weight);
-            this->animals.push_back(cat);
-            animalsFH.Write(cat);
-            animalsMap[cat->GetID()] = cat;
-            return cat;
-        default:
-            throw invalid_argument("PetHotel::AddAnimal: Incorrect Animal type.");
+Animal *PetHotel::AddAnimal(const string &type, const string &name, const string &birthDate,
+                            const string &breed, int weight)
+{
+    if (type == "Dog") {
+        Dog* dog = new Dog(name, birthDate, breed, weight);
+        this->animals.push_back(dog);
+        animalsFH.Write(dog);
+        animalsMap[dog->GetID()] = dog;
+        return dog;
+    }
+    else if (type == "Cat") {
+        Cat* cat = new Cat(name, birthDate, breed, weight);
+        this->animals.push_back(cat);
+        animalsFH.Write(cat);
+        animalsMap[cat->GetID()] = cat;
+        return cat;
+    }
+    else {
+        throw invalid_argument("PetHotel::AddAnimal: Incorrect Animal type.");
     }
 }
 
-Animal *PetHotel::AddAnimal(const string &type, const string &name, const string &birthDate, const string &breed, const string &rodentType) {
-    switch (type) {
-        case "Rodent":
-            Rodent* rodent = new Rodent(name, birthDate, breed,  rodentType);
-            this->animals.push_back(rodent);
-            animalsFH.Write(rodent);
-            animalsMap[rodent->GetID()] = rodent;
-            return rodent;
-        default:
-            throw invalid_argument("PetHotel::AddAnimal: Incorrect Animal type.");
+Animal *PetHotel::AddAnimal(const string &type, const string &name, const string &birthDate,
+                            const string &breed, const string &rodentType)
+{
+    if (type == "Rodent") {
+        Rodent* rodent = new Rodent(name, birthDate, breed, rodentType);
+        this->animals.push_back(rodent);
+        animalsFH.Write(rodent);
+        animalsMap[rodent->GetID()] = rodent;
+        return rodent;
+    }
+    else {
+        throw invalid_argument("PetHotel::AddAnimal: Incorrect Animal type.");
     }
 }
-
-
-
 
 vector<Kennel*> PetHotel::GetKennels() const {
     return this->kennels;
@@ -146,6 +148,19 @@ void PetHotel::AddReservation(Reservation *reservation) {
     reservationsFH.Write(reservation);
 }
 
+Reservation *PetHotel::AddReservation(const string &startDate, const string &endDate, bool putTogether, Animal *animal) {
+    Reservation* reservation = new Reservation(startDate, endDate, putTogether, animal);
+    this->reservations.push_back(reservation);
+    return reservation;
+}
+
+
+void PetHotel::AddBooking(Animal* animal, int kennelID, DatePeriod datePeriod, bool fullBooking) {
+    int requiredSpace = fullBooking ? -1 : animal->GetSpace();
+    booking.AddBooking(animal->GetID(), kennelID, datePeriod, requiredSpace);
+}
+
+
 Animal *PetHotel::FindAnimal(int id) {
     for (int i = 0; i < this->animals.size(); i++) {
         if (this->animals[i]->GetID() == id) {
@@ -165,130 +180,175 @@ Kennel* PetHotel::FindKennel(int id) {
     return nullptr;
 }
 
-vector<Kennel *> PetHotel::ChooseKennels(Animal* animal, bool putTogether, DatePeriod datePeriod){
+vector<BookingData> PetHotel::AutoChooseKennels(Animal* animal, bool putTogether, DatePeriod datePeriod) {
     string type = animal->GetType();
     vector<Kennel*> result;
-    bool accepted = true;
-    string size, rodentType;
+    string rodentType;
+    int requiredSpace{1};
 
-    switch (type) {
-        case "Dog":
-            size = Animal::CarvinoresWeightToSize(dynamic_cast<Dog*>(animal)->GetWeight());
-            for (int i = 0; i < this->kennels.size(); i++) {
-                if (kennels[i]->GetSize() != size) accepted = false;
-                if (kennels[i]->GetType() != "Dog" && kennels[i]->GetType() != "NULL") accepted = false;
-                if (putTogether && kennels[i]->GetFreeSpots() == 0) accepted = false;
+    if (type == "Dog") {
+        requiredSpace = animal->GetSpace();
 
-                if (accepted) result.push_back(kennels[i]);
-            }
-            break;
-        case "Cat":
-            size = Animal::CarvinoresWeightToSize(dynamic_cast<Cat*>(animal)->GetWeight());
-            for (int i = 0; i < this->kennels.size(); i++) {
-                if ((size != "Medium" && size != "Small") || kennels[i]->GetSize() != size) accepted = false;
-                if (kennels[i]->GetType() != "Cat" && kennels[i]->GetType() != "NULL") accepted = false;
-                if (putTogether && kennels[i]->CheckAvailability() == false) accepted = false;
+        for (int i = 0; i < this->kennels.size(); i++) {
+            bool accepted = true;
 
-                if (accepted) result.push_back(kennels[i]);
-            }
-            break;
-        case "Rodent":
-            rodentType = dynamic_cast<Rodent*>(animal)->GetRodentType();
-            for (int i = 0; i < this->kennels.size(); i++) {
-                if (kennels[i]->GetSize() != "Mini") accepted = false;
-                if (kennels[i]->GetType() != rodentType && kennels[i]->GetType() != "NULL") accepted = false;
-                if (putTogether && kennels[i]->CheckAvailability() == false) accepted = false;
+            if (requiredSpace > kennels[i]->GetFullSpace())
+                accepted = false;
+            else if (kennels[i]->GetType() != "Dog" && kennels[i]->GetType() != "NULL")
+                accepted = false;
 
-                if (accepted) result.push_back(kennels[i]);
-            }
-            break;
-        default:
-            throw logic_error("Choose kennel: Didn't find a valid Animal type.");
+            if (accepted)
+                result.push_back(kennels[i]);
+        }
+    }
+    else if (type == "Cat") {
+         requiredSpace = animal->GetSpace();
+
+        for (int i = 0; i < this->kennels.size(); i++) {
+            bool accepted = true;
+
+            if (requiredSpace > kennels[i]->GetFullSpace())
+                accepted = false;
+            else if (kennels[i]->GetType() != "Cat" && kennels[i]->GetType() != "NULL")
+                accepted = false;
+
+            if (accepted)
+                result.push_back(kennels[i]);
+        }
+    }
+    else if (type == "Rodent") {
+        rodentType = dynamic_cast<Rodent*>(animal)->GetRodentType();
+        requiredSpace = animal->GetSpace();
+
+        for (int i = 0; i < this->kennels.size(); i++) {
+            bool accepted = true;
+
+            if (kennels[i]->GetSize() != "Mini")
+                accepted = false;
+            else if (kennels[i]->GetType() != rodentType && kennels[i]->GetType() != "NULL")
+                accepted = false;
+
+            if (accepted)
+                result.push_back(kennels[i]);
+        }
+    }
+    else {
+        throw logic_error("Choose kennel: Didn't find a valid Animal type.");
     }
 
-    result = booking.FindAvailableKennels(result, datePeriod);
-    if (putTogether) {
-        sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {
-            if (a->GetIsEmpty() != b->GetIsEmpty())
-                return a->GetIsEmpty() < b->GetIsEmpty();
-            return a->GetFreeSpots() < b->GetFreeSpots();
-        });
-    }else {
-        sort(result.begin(), result.end(),[](Kennel* a, Kennel* b) {return a->GetCapacity() < b->GetCapacity();});
-    }
-    return result;
+    vector<BookingData> booking_datas;
+    booking.FindPossibleBookings(result, datePeriod, requiredSpace, booking_datas);
 
+    return booking_datas;
 }
 
 
 void PetHotel::DisplayKennels() {
     cout << endl;
     cout << "==================================== Kennels =========================================" << endl;
+    cout << setw(5) << "#" << "|"
+         << setw(10) << "ID" << "|"
+         << setw(10) << "Type" << "|"
+         << setw(10) << "Capacity" << "|"
+         << setw(10) << "Size" << "|"
+         << setw(20) << "Animals" << endl;
     cout << "======================================================================================" << endl;
+
     for (int i = 0; i < this->kennels.size(); i++) {
+        cout << setw(5) << i << "|";
         cout << setw(10) << this->kennels[i]->GetID() << "|";
         cout << setw(10) << this->kennels[i]->GetType() << "|";
         cout << setw(10) << this->kennels[i]->GetCapacity() << "|";
         cout << setw(10) << this->kennels[i]->GetSize() << "|";
-        cout << setw(20);
+
         vector<Animal*> animals = this->kennels[i]->GetAnimals();
-        cout << "[";
+        cout << setw(20) << "[";
         for (int j = 0; j < animals.size(); j++) {
-            cout << animals[j]->GetID() << " ";
+            cout << animals[j]->GetID();
+            if (j < animals.size() - 1) cout << ", ";
         }
         cout << "]";
         cout << endl;
     }
+
     cout << "======================================================================================" << endl;
 }
 
 void PetHotel::DisplayKennels(vector<Kennel*> sliced_kennels) {
     cout << endl;
     cout << "==================================== Kennels =========================================" << endl;
+    cout << setw(5) << "#" << "|"
+         << setw(10) << "ID" << "|"
+         << setw(10) << "Type" << "|"
+         << setw(10) << "Capacity" << "|"
+         << setw(10) << "Size" << "|"
+         << setw(20) << "Animals" << endl;
     cout << "======================================================================================" << endl;
+
     for (int i = 0; i < sliced_kennels.size(); i++) {
+        cout << setw(5) << i << "|";
         cout << setw(10) << sliced_kennels[i]->GetID() << "|";
         cout << setw(10) << sliced_kennels[i]->GetType() << "|";
         cout << setw(10) << sliced_kennels[i]->GetCapacity() << "|";
         cout << setw(10) << sliced_kennels[i]->GetSize() << "|";
-        cout << setw(20);
+
         vector<Animal*> animals = sliced_kennels[i]->GetAnimals();
-        cout << "[";
+        cout << setw(20) << "[";
         for (int j = 0; j < animals.size(); j++) {
-            cout << animals[j]->GetID() << " ";
+            cout << animals[j]->GetID();
+            if (j < animals.size() - 1) cout << ", ";
         }
         cout << "]";
         cout << endl;
     }
+
     cout << "======================================================================================" << endl;
 }
 
 void PetHotel::DisplayReservations() {
     cout << endl;
     cout << "================================== Reservations ======================================" << endl;
+    cout << setw(5) << "#" << "|"
+         << setw(10) << "ID" << "|"
+         << setw(10) << "Start" << "|"
+         << setw(10) << "End" << "|"
+         << setw(10) << "Together" << "|"
+         << setw(20) << "Animals" << endl;
     cout << "======================================================================================" << endl;
+
     for (int i = 0; i < this->reservations.size(); i++) {
+        cout << setw(5) << i << "|";
         cout << setw(10) << reservations[i]->GetID() << "|";
         cout << setw(10) << reservations[i]->GetStartDate() << "|";
         cout << setw(10) << reservations[i]->GetEndDate() << "|";
         cout << setw(10) << reservations[i]->GetPutTogether() << "|";
-        cout << setw(20);
+
         vector<Animal*> animals = reservations[i]->GetAnimals();
-        cout << "[";
+        cout << setw(20) << "[";
         for (int j = 0; j < animals.size(); j++) {
-            cout << animals[j]->GetID() << " ";
+            cout << animals[j]->GetID();
+            if (j < animals.size() - 1) cout << ", ";
         }
         cout << "]";
         cout << endl;
     }
+
     cout << "======================================================================================" << endl;
 }
 
 void PetHotel::DisplayAnimals() {
     cout << endl;
     cout << "===================================== Animals ========================================" << endl;
+    cout << setw(5) << "#" << "|"
+         << setw(10) << "ID" << "|"
+         << setw(10) << "Name" << "|"
+         << setw(10) << "Birth" << "|"
+         << setw(10) << "Breed" << "|"
+         << setw(10) << "Care" << endl;
     cout << "======================================================================================" << endl;
+
     for (int i = 0; i < animals.size(); i++) {
+        cout << setw(5) << i << "|";
         cout << setw(10) << animals[i]->GetID() << "|";
         cout << setw(10) << animals[i]->GetName() << "|";
         cout << setw(10) << animals[i]->GetBirthDate() << "|";
@@ -296,15 +356,23 @@ void PetHotel::DisplayAnimals() {
         cout << setw(10) << animals[i]->GetCareSchedule() << "|";
         cout << endl;
     }
+
     cout << "======================================================================================" << endl;
 }
 
 void PetHotel::DisplayAnimals(vector<Animal*> sliced_animals) {
     cout << endl;
     cout << "===================================== Animals ========================================" << endl;
+    cout << setw(5) << "#" << "|"
+         << setw(10) << "ID" << "|"
+         << setw(10) << "Name" << "|"
+         << setw(10) << "Birth" << "|"
+         << setw(10) << "Breed" << "|"
+         << setw(10) << "Care" << endl;
     cout << "======================================================================================" << endl;
+
     for (int i = 0; i < sliced_animals.size(); i++) {
-        cout << setw(10) << i << "|";
+        cout << setw(5) << i << "|";
         cout << setw(10) << sliced_animals[i]->GetID() << "|";
         cout << setw(10) << sliced_animals[i]->GetName() << "|";
         cout << setw(10) << sliced_animals[i]->GetBirthDate() << "|";
@@ -312,5 +380,6 @@ void PetHotel::DisplayAnimals(vector<Animal*> sliced_animals) {
         cout << setw(10) << sliced_animals[i]->GetCareSchedule() << "|";
         cout << endl;
     }
+
     cout << "======================================================================================" << endl;
 }

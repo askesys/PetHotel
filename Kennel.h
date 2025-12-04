@@ -10,6 +10,7 @@
 #include <__random/uniform_int_distribution.h>
 
 #include "Animal.h"
+#include "Logic/DatePeriod.h"
 using namespace std;
 
 class Kennel {
@@ -39,9 +40,11 @@ public:
     void SetIsEmpty(bool isEmpty);
     int GetID() const;
     void SetID(int ID);
-    bool CheckAvailability();
-    int GetTakenSpots() const;
-    int GetFreeSpots() const;
+    bool CheckAvailability(Animal* animal);
+    bool CheckAvailability(Animal* animal, DatePeriod datePeriod);
+
+    static int KennelSizeToSpace(const string& size);
+    int GetFullSpace() const;
 };
 
 

@@ -1,5 +1,5 @@
-Reservation 1
-Kennel 110
-Dog 1002
+Reservation 5
+Kennel 2
+Dog 1005
 Cat 2000
-Rodent 3001
+Rodent 3000

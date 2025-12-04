@@ -12,23 +12,34 @@
 #include "DatePeriod.h"
 #include "../Kennel.h"
 #include "../Reservation.h"
+#include "../Files/BookingFH.h"
 
 using namespace std;
 
+struct BookingData {
+    int kennelID;
+    Date startDate;
+    Date endDate;
+};
+
 class Booking {
 private:
-    int BOOKING_PERIOD;
+    const int BOOKING_PERIOD{90};
     map<int, int> mapKennelID;
-    vector<BookingEntry> bookingEntries;
-    vector<vector<int>> availableKennels;
+    vector<BookingEntry*> bookingEntries;
+    vector<vector<int>> free_spaces;
     Date beginDate;
+    BookingFH bookingFH;
 
 public:
-    Booking() = default;
-    Booking(vector<Kennel*> kennels, vector<Reservation*> reservations);
-    void AddBooking(Animal* animal, Kennel* kennel, DatePeriod datePeriod);
-    void BlockKennel(Kennel* kennel, DatePeriod datePeriod);
-    vector<Kennel*> FindAvailableKennels(const std::vector<Kennel*> &kennels, DatePeriod datePeriod);
+    Booking();
+    ~Booking();
+
+    void GenerateBookingCalendar(vector<Kennel *> kennels, map<int, Animal*> animalMap);
+    void AddBooking(int animalID, int kennelID, DatePeriod datePeriod, int requiredSpace);
+    void FindPossibleBookings(const vector<Kennel *> &kennels, DatePeriod datePeriod, int requiredSpace,
+    vector<BookingData>& bookingData);
+    bool isBookingExists(const vector<Kennel *> &kennels, DatePeriod datePeriod, int requiredSpace);
 };
 
 

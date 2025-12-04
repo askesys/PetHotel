@@ -39,15 +39,16 @@ vector<Kennel *> KennelsFH::Read(map<int, Animal *> *animalsMap) {
 
         index = 0;
         line = values[4];
-        while ((delimeter = line.find(":")) != string::npos) {
-            animalID = stoi(line.substr(0, delimeter));
+        if (line != "") {
+            while ((delimeter = line.find(":")) != string::npos) {
+                animalID = stoi(line.substr(0, delimeter));
+                animals.push_back((*animalsMap)[animalID]);
+                line = line.substr(delimeter + 1, line.length());
+                index++;
+            }
+            animalID = stoi(line);
             animals.push_back((*animalsMap)[animalID]);
-            line = line.substr(delimeter + 1, line.length());
-            index++;
         }
-        animalID = stoi(line);
-        animals.push_back((*animalsMap)[animalID]);
-
         isEmpty = values[4] == "1" ? true : false;
 
         Kennel* kennel = new Kennel(stoi(values[0]), values[1], stoi(values[2]), values[3], isEmpty, animals);
@@ -90,6 +91,13 @@ void KennelsFH::WriteAll(vector<Kennel *> kennels) {
         cerr << this->name << " cannot be opened for writing" << endl;
         exit(EXIT_FAILURE);
     }
+
+    file << "ID" << ",";
+    file << "Size" << ",";
+    file << "Capacity" << ",";
+    file << "Type" << ",";
+    file << "Animals" << ",";
+    file << "IsEmpty" << endl;
 
     for (auto kennel : kennels) {
         file << kennel->GetID() << ",";

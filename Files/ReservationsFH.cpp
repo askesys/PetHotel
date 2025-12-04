@@ -39,15 +39,16 @@ vector<Reservation*> ReservationsFH::Read(map<int,Animal*> *animalsMap) {
 
         index = 0;
         line = values[3];
-        while ((delimeter = line.find(":")) != string::npos) {
-            animalID = stoi(line.substr(0, delimeter));
+        if (line != "") {
+            while ((delimeter = line.find(":")) != string::npos) {
+                animalID = stoi(line.substr(0, delimeter));
+                animals.push_back((*animalsMap)[animalID]);
+                line = line.substr(delimeter + 1, line.length());
+                index++;
+            }
+            animalID = stoi(line);
             animals.push_back((*animalsMap)[animalID]);
-            line = line.substr(delimeter + 1, line.length());
-            index++;
         }
-        animalID = stoi(line);
-        animals.push_back((*animalsMap)[animalID]);
-
         putTogether = values[4] == "1" ? true : false;
 
         Reservation* reservation = new Reservation(stoi(values[0]), values[1], values[2], animals, putTogether);
@@ -89,6 +90,12 @@ void ReservationsFH::WriteAll(vector<Reservation *> reservations) {
         cerr << this->name << " cannot be opened for writing" << endl;
         exit(EXIT_FAILURE);
     }
+
+    file << "ID" << ",";
+    file << "StartDate" << ",";
+    file << "EndDate" << ",";
+    file << "Animals" << ",";
+    file << "PutTogether" << endl;
 
     for (auto reservation : reservations) {
         file << reservation->GetID() << ",";

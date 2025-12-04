@@ -55,9 +55,11 @@ public:
     vector<Reservation*> GetReservations() const;
     void SetReservations(vector<Reservation*>);
     void AddReservation(Reservation*);
+    Reservation* AddReservation(const string& startDate, const string& endDate, bool putTogether, Animal* animal);
+    void AddBooking(Animal* animal, int kennelID, DatePeriod datePeriod, bool fullBooking = false);
     Animal* FindAnimal(int id);
     Kennel* FindKennel(int id);
-    vector<Kennel*> ChooseKennels(Animal* animal, bool putTogether, DatePeriod datePeriod);
+    vector<BookingData> AutoChooseKennels(Animal* animal, bool putTogether, DatePeriod datePeriod);
     void DisplayKennels();
     void DisplayKennels(vector<Kennel*> sliced_kennels);
     void DisplayReservations();

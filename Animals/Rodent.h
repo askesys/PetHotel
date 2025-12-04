@@ -22,6 +22,7 @@ public:
     void SetRodentType(const string &rodentType);
     void MakeSound() override;
     string GetType() override;
+    int GetSpace() const override;
 };
 
 

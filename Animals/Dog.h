@@ -23,6 +23,7 @@ public:
     void SetWeight(int weight);
     void MakeSound() override;
     string GetType() override;
+    int GetSpace() const override;
 };
 
 

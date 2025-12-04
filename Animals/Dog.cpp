@@ -40,3 +40,8 @@ void Dog::MakeSound(){
 string Dog::GetType(){
     return "Dog";
 }
+
+int Dog::GetSpace() const {
+    return Animal::WeightToSpace(weight);
+}
+

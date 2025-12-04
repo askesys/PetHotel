@@ -20,14 +20,14 @@ bool DatePeriod::contains(const Date& d) const {
 }
 
 int DatePeriod::length() const {
-    return end - start + 1; // inclusive
+    return end - start; // exclusive
 }
 
 std::vector<Date> DatePeriod::toVector() const {
     std::vector<Date> result;
     result.reserve(length());
 
-    for (Date d = start; d <= end; d = d + 1)
+    for (Date d = start; d < end; d = d + 1)
         result.push_back(d);
 
     return result;

@@ -28,6 +28,7 @@ public:
     int getDay() const;
     int getMonth() const;
     int getYear() const;
+    std::string toString() const;
 
     // Operators
     Date operator+(int days) const;

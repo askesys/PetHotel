@@ -36,4 +36,6 @@ add_executable(PetHotel main.cpp
         Logic/Booking.h
         Logic/BookingEntry.cpp
         Logic/BookingEntry.h
+        Files/BookingFH.cpp
+        Files/BookingFH.h
 )

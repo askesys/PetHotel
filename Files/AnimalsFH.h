@@ -2,15 +2,14 @@
 // Created by Nikita Bekeruk on 25/11/2025.
 //
 
+#ifndef ANIMALSFH_H
+#define ANIMALSFH_H
+
 #include <string>
 #include <vector>
 #include "../Animal.h"
 
 using namespace std;
-
-#ifndef ANIMALSFH_H
-#define ANIMALSFH_H
-
 
 class AnimalsFH {
 private:

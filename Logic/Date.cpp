@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 Date::Date() : day(1), month(1), year(1970) {}
 
@@ -100,6 +101,16 @@ Date Date::fromDays(int totalDays) {
 int Date::getDay() const { return day; }
 int Date::getMonth() const { return month; }
 int Date::getYear() const { return year; }
+
+std::string Date::toString() const {
+    std::ostringstream oss;
+    oss << std::setw(2) << std::setfill('0') << day << "/"
+        << std::setw(2) << std::setfill('0') << month << "/"
+        << year;
+    return oss.str();
+}
+
+
 
 // date + N days
 Date Date::operator+(int days) const {
