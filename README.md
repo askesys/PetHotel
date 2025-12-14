@@ -6,3 +6,6 @@ Look AnimalFilter class
 
 If you use dunction DisplayKennels, you will see animals in kennels only on current date
 Information for future reservations stores in bookings
+
+If something don't work, I also added this to github:
+https://github.com/askesys/PetHotel
