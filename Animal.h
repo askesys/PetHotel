@@ -2,10 +2,10 @@
 // Created by Nikita Bekeruk on 06/11/2025.
 //
 
-#include<string>
-
 #ifndef ANIMAL_H
 #define ANIMAL_H
+
+#include<string>
 
 using namespace std;
 

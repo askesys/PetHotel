@@ -2,25 +2,21 @@
 // Created by Nikita Bekeruk on 05/11/2025.
 //
 
+#ifndef PETHOTEL_H
+#define PETHOTEL_H
+
 #include <map>
 #include<string>
 #include "Animal.h"
 #include "Reservation.h"
 #include "Kennel.h"
-#include "Animals/AnimalFilter.h"
 #include "Files/AnimalsFH.h"
 #include "Files/KennelsFH.h"
 #include "Files/ReservationsFH.h"
-#include "Animals/Dog.h"
-#include "Animals/Cat.h"
-#include "Animals/Rodent.h"
 #include "Logic/Booking.h"
 #include "Logic/DatePeriod.h"
 
 using namespace std;
-
-#ifndef PETHOTEL_H
-#define PETHOTEL_H
 
 class PetHotel {
 private:
@@ -50,21 +46,31 @@ public:
     Animal* AddAnimal(const string& type, const string& name, const string& birthDate, const string& breed, const string& rodentType);
     vector<Kennel*> GetKennels() const;
     void SetKennels(vector<Kennel*>);
+    void SetRelevantAnimals(map<int,vector<Animal*>> animalsInKennels);
     void AddKennel(Kennel* kennel);
+    void AddKennel(const string& size);
     void RemoveKennel(Kennel* kennel);
     vector<Reservation*> GetReservations() const;
     void SetReservations(vector<Reservation*>);
     void AddReservation(Reservation*);
     Reservation* AddReservation(const string& startDate, const string& endDate, bool putTogether, Animal* animal);
-    void AddBooking(Animal* animal, int kennelID, DatePeriod datePeriod, bool fullBooking = false);
+    bool IsValidReservation(Animal* animal, DatePeriod period);
+    Reservation* FindReservation(int reservationID) const;
+    void EditReservation(Reservation* reservation, DatePeriod period);
+    void EditReservation(Reservation* reservation, const vector<Animal*>& targetAnimals);
+    void RemoveReservation(Reservation* reservation);
+    void AddBooking(Animal* animal, int reservationID, int kennelID, DatePeriod datePeriod, bool fullBooking = false);
     Animal* FindAnimal(int id);
+    void MoveAnimal(Reservation* reservation, Animal* animal, Kennel* kennel, DatePeriod period);
     Kennel* FindKennel(int id);
     vector<BookingData> AutoChooseKennels(Animal* animal, bool putTogether, DatePeriod datePeriod);
+    bool ChooseKennel(Kennel* kennel, Animal* animal, bool putTogether, DatePeriod datePeriod);
     void DisplayKennels();
     void DisplayKennels(vector<Kennel*> sliced_kennels);
     void DisplayReservations();
     void DisplayAnimals();
     void DisplayAnimals(vector<Animal*> sliced_animals);
+    void DisplayBookings();
 };
 
 #endif //PETHOTEL_H

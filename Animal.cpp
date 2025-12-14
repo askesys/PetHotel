@@ -3,7 +3,7 @@
 //
 
 #include "Animal.h"
-
+#include <chrono>
 #include "PetHotel.h"
 
 Animal::Animal(const string &name, const string &birthDate, const string &breed):
@@ -57,15 +57,12 @@ void Animal::SetCareSchedule(const string& careSchedule) {
 
 string Animal::CarvinoresWeightToSize(int weight) {
     if (weight < 0) {
-        invalid_argument("passed weight is negative");
-        return "";
+        throw invalid_argument("passed weight is negative");
     }
 
     if (weight >= 25) return "Large";
     if (weight >= 10 && weight < 25) return "Medium";
     if (weight < 10) return "Small";
-
-    return "Invalid string";
 }
 
 string Animal::RecommendCareSchedule(const string &type, int weight) {
@@ -130,6 +127,28 @@ int Animal::WeightToSpace(int weight) {
     string size = Animal::CarvinoresWeightToSize(weight);
     return AnimalSizeToSpace(size);
 }
+
+int Animal::CalculateAge() const {
+    int d, m, y;
+    char slash;
+
+    std::istringstream iss(this->birthDate);
+    iss >> d >> slash >> m >> slash >> y;
+
+    std::time_t t = std::time(nullptr);
+    std::tm* now = std::localtime(&t);
+
+    int age = (now->tm_year + 1900) - y;
+
+    if ((now->tm_mon + 1 < m) ||
+        (now->tm_mon + 1 == m && now->tm_mday < d))
+    {
+        age--;
+    }
+
+    return age;
+}
+
 
 
 

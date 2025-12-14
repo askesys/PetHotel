@@ -4,7 +4,6 @@
 
 #include "AnimalFilter.h"
 
-#include <ranges>
 
 AnimalFilter::AnimalFilter(map<AnimalKey, string> keyMap):keyMap(keyMap){}
 

@@ -9,6 +9,8 @@
 #include "../Files/BookingFH.h"
 #include "../Kennel.h"
 
+Date Booking::beginDate;
+
 Booking::Booking() {
     auto today = floor<chrono::days>(chrono::system_clock::now());
     chrono::year_month_day ymd{today};
@@ -29,7 +31,8 @@ Booking::~Booking() {
     }
 }
 
-void Booking::GenerateBookingCalendar(vector<Kennel *> kennels, map<int, Animal *> animalMap) {
+void Booking::GenerateBookingCalendar(const vector<Kennel *> &kennels, map<int, Animal *> animalMap) {
+
     int id = 0;
     for (Kennel *kennel : kennels) {
         mapKennelID[kennel->GetID()] = id;
@@ -41,14 +44,23 @@ void Booking::GenerateBookingCalendar(vector<Kennel *> kennels, map<int, Animal 
         id++;
     }
 
+}
+
+
+map<int, vector<Animal *> > Booking::GetCurrentAnimals(map<int, Animal *> animalMap) {
+    map<int,vector<Animal*>> currentKennelsAnimals;
+
     for (BookingEntry *bookingEntry : bookingEntries) {
+        int animalID = bookingEntry->GetAnimalID();
+        int kennelID = bookingEntry->GetKennelID();
+        Date startDate(bookingEntry->GetStartDate());
         Date endDate(bookingEntry->GetEndDate());
         if (beginDate < endDate) {
-            Date startDate(bookingEntry->GetStartDate());
-            if (startDate < beginDate) bookingEntry->SetStartDate(beginDate);
-            int animalID = bookingEntry->GetAnimalID();
+            if (startDate <= beginDate) {
+                bookingEntry->SetStartDate(beginDate);
+                currentKennelsAnimals[kennelID].push_back(animalMap[animalID]);
+            }
             int space = animalMap[animalID]->GetSpace();
-            int kennelID = bookingEntry->GetKennelID();
             int kid = mapKennelID[kennelID];
             DatePeriod dp(bookingEntry->GetStartDate(), bookingEntry->GetEndDate());
             for (Date date: dp.toVector()) {
@@ -57,19 +69,32 @@ void Booking::GenerateBookingCalendar(vector<Kennel *> kennels, map<int, Animal 
             }
         }
     }
+
+    return currentKennelsAnimals;
 }
 
 
 
-void Booking::AddBooking(int animalID, int kennelID, DatePeriod datePeriod, int requiredSpace) {
-    BookingEntry* be = new BookingEntry(animalID,kennelID,datePeriod.getStart(),datePeriod.getEnd());
-    bookingEntries.push_back(be);
+bool Booking::isValidStartDate(const Date &date) {
+    return date >= beginDate;
+}
+
+bool Booking::isValidPeriod(const DatePeriod &datePeriod) {
+    return datePeriod.length() >= MIN_DAYS_ALLOWED && datePeriod.length() <= MAX_DAYS_ALLOWED;
+}
+
+
+
+
+void Booking::AddBooking(int reseravationID, int animalID, int kennelID, DatePeriod datePeriod, int requiredSpace) {
+    auto* be = new BookingEntry(reseravationID, animalID,kennelID,datePeriod.getStart(),datePeriod.getEnd());
+    this->bookingEntries.push_back(be);
 
     int id = mapKennelID[kennelID];
     for (auto date: datePeriod.toVector()) {
         int date_s = date - beginDate;
         if (requiredSpace == -1) {
-            free_spaces[id][date_s] == -1;
+            free_spaces[id][date_s] = -1;
         }
         else {
             free_spaces[id][date_s] -= requiredSpace;
@@ -136,5 +161,55 @@ bool Booking::isBookingExists(const vector<Kennel *> &kennels, DatePeriod datePe
     return false;
 }
 
+bool Booking::isAnyBooked(int kennelID) {
+    int id = mapKennelID[kennelID];
+    for (int i = 0; i < BOOKING_PERIOD; i++) {
+        if (free_spaces[id][i] < 4) return true;
+    }
+    return false;
+}
+
+
+vector<BookingEntry *> Booking::GetBookings() const {
+    return this->bookingEntries;
+}
+
+vector<BookingEntry *> Booking::GetBookings(int kennelID) const {
+    vector<BookingEntry *> sliced;
+    for (auto bookingEntry : this->bookingEntries) {
+        if (bookingEntry->GetKennelID() == kennelID) sliced.push_back(bookingEntry);
+    }
+    return sliced;
+}
+
+vector<BookingEntry *> Booking::GetBookings(int reservationID, int animalID) {
+    vector<BookingEntry *> sliced;
+    for (auto bookingEntry : this->bookingEntries) {
+        if (bookingEntry->GetReservationID() == reservationID && bookingEntry->GetAnimalID() == animalID) sliced.push_back(bookingEntry);
+    }
+    return sliced;
+}
+
+
+void Booking::RemoveBooking(BookingEntry *bookingEntry, map<int, Animal *> animalMap) {
+    auto it = find(bookingEntries.begin(), bookingEntries.end(), bookingEntry);
+    if (it != bookingEntries.end()) {
+        int id = mapKennelID[bookingEntry->GetKennelID()];
+        DatePeriod datePeriod(Date(bookingEntry->GetStartDate()), Date(bookingEntry->GetEndDate()));
+        for (auto date: datePeriod.toVector()) {
+            int date_s = date - beginDate;
+            if (free_spaces[id][date_s] == -1) {
+                free_spaces[id][date_s] = 4;
+            }
+            else {
+                free_spaces[id][date_s] += animalMap[bookingEntry->GetAnimalID()]->GetSpace();
+            }
+        }
+
+
+        bookingEntries.erase(it);
+        delete bookingEntry;
+    }
+}
 
 

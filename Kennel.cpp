@@ -5,11 +5,16 @@
 #include "Kennel.h"
 
 #include "Animals/Dog.h"
-#include "Animals/Cat.h"
 #include "Animals/Rodent.h"
 
-Kennel::Kennel(int ID, const string& size, int capacity, bool isEmpty):
-    ID(ID), size(size), capacity(capacity), isEmpty(isEmpty), type("NULL"){}
+int Kennel::STANDART_CAPACITY{4};
+
+Kennel::Kennel(const string &size, int capacity):size(size), capacity(capacity), type("NULL"), isEmpty(true) {
+    this->ID = IDManager::NewID("Kennel");
+}
+
+Kennel::Kennel(int ID, const string& size, int capacity):
+    ID(ID), size(size), capacity(capacity), type("NULL"), isEmpty(true){}
 
 Kennel::Kennel(int ID, const string& size, int capacity, const string& type, bool isEmpty, vector<Animal*> animals):
     ID(ID), size(size), capacity(capacity), type(type), isEmpty(isEmpty), animals(animals){}
@@ -102,5 +107,6 @@ int Kennel::KennelSizeToSpace(const string &size) {
 int Kennel::GetFullSpace() const {
     return KennelSizeToSpace(this->size);
 }
+
 
 

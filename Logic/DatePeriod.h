@@ -16,6 +16,7 @@ private:
     Date end;
 
 public:
+    DatePeriod(){};
     DatePeriod(Date start, Date end);
 
     const Date& getStart() const;

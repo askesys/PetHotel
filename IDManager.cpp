@@ -9,19 +9,13 @@
 
 using namespace std;
 
-int IDManager::kennelID = 0;
-int IDManager::animalID = 0;
-int IDManager::reservationID = 0;
-int IDManager::dogID = 1000;
-int IDManager::catID = 2000;
-int IDManager::rodentID = 3000;
-
 map<string, int> IDManager::idMap = {
     {"Reservation", 0},
         {"Kennel", 0},
     {"Dog", 0},
     {"Cat", 0},
-    {"Rodent", 0}
+    {"Rodent", 0},
+    {"Booking", 0}
 };
 
 int IDManager::NewID(const string& type){
@@ -43,6 +37,7 @@ void IDManager::Read() {
     file >> title >> idMap["Dog"];
     file >> title >> idMap["Cat"];
     file >> title >> idMap["Rodent"];
+    file >> title >> idMap["Booking"];
 
     file.close();
 
@@ -61,6 +56,7 @@ void IDManager::Write() {
     file << "Dog " << idMap["Dog"] << endl;
     file << "Cat " << idMap["Cat"] << endl;
     file << "Rodent " << idMap["Rodent"] << endl;
+    file << "Booking " << idMap["Booking"] << endl;
 
     file.close();
 }

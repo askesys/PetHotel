@@ -4,3 +4,4 @@ ID,Type,Name,BirthDate,Breed,CareSchedule,Weight,RodentType
 1003,Dog,Mert,13/03/2001,Spaniel,Should be walked several times a day,78,NULL
 1004,Dog,Velimir,10/09/2004,Shepard,Should be walked several times a day,80,NULL
 1005,Dog,Simona,06/07/2005,Chihuahua,Should be walked several times a day,67,NULL
+1006,Dog,Ichigo,12/01/2009,Labrador,Should be walked twice a day,31,NULL

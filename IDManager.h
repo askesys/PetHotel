@@ -11,13 +11,6 @@ using namespace std;
 
 
 class IDManager {
-    static int kennelID;
-    static int animalID;
-    static int reservationID;
-    static int dogID;
-    static int catID;
-    static int rodentID;
-
     static map<string, int> idMap;
 
 public:

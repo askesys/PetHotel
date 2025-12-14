@@ -6,6 +6,8 @@
 #include<string>
 
 #include "IDManager.h"
+#include "Logic/Booking.h"
+#include "Logic/Date.h"
 
 using namespace std;
 
@@ -68,8 +70,8 @@ void Reservation::SetID(int ID) {
     this->ID = ID;
 }
 
-/*
 bool Reservation::IsDurationValid() const {
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    Date sDate(this->startDate), eDate(this->endDate);
+    int length = eDate - sDate;
+    return length >= 2 && length <= 14; //I validate this when I create reservation. But can be used for debuging later
 }
-*/

@@ -7,10 +7,8 @@
 
 #include<string>
 #include<vector>
-#include <__random/uniform_int_distribution.h>
 
 #include "Animal.h"
-#include "Logic/DatePeriod.h"
 using namespace std;
 
 class Kennel {
@@ -22,7 +20,10 @@ private:
     vector<Animal*> animals;
     bool isEmpty;
 public:
-    Kennel(int ID, const string& size, int capacity, bool isEmpty);
+    static int STANDART_CAPACITY;
+
+    Kennel(const string& size, int capacity);
+    Kennel(int ID, const string& size, int capacity);
     Kennel(int ID, const string& size, int capacity, const string& type, bool isEmpty, vector<Animal*> animals);
     ~Kennel();
 
@@ -40,8 +41,6 @@ public:
     void SetIsEmpty(bool isEmpty);
     int GetID() const;
     void SetID(int ID);
-    bool CheckAvailability(Animal* animal);
-    bool CheckAvailability(Animal* animal, DatePeriod datePeriod);
 
     static int KennelSizeToSpace(const string& size);
     int GetFullSpace() const;

@@ -17,7 +17,7 @@ vector<BookingEntry *> BookingFH::Read() {
     string line, element;
     int delimeter;
 
-    string values[5];
+    string values[6];
 
     if (!file) {
         cerr << this->path << " cannot be opened for reading" << endl;
@@ -34,8 +34,7 @@ vector<BookingEntry *> BookingFH::Read() {
         }
         values[index] = line;
 
-        BookingEntry* be = new BookingEntry(stoi(values[1]), stoi(values[2]), Date(values[3]), Date(values[4]));
-        be->SetID(stoi(values[0]));
+        BookingEntry* be = new BookingEntry(stoi(values[0]),stoi(values[1]), stoi(values[2]), stoi(values[3]),Date(values[4]), Date(values[5]));
         bookingEntries.push_back(be);
     }
 
@@ -53,6 +52,7 @@ void BookingFH::Write(BookingEntry* bookingEntry) {
     }
 
     file << bookingEntry->GetID() << ",";
+    file << bookingEntry->GetReservationID() << ",";
     file << bookingEntry->GetAnimalID() << ",";
     file << bookingEntry->GetKennelID() << ",";
     file << bookingEntry->GetStartDate() << ",";
@@ -70,6 +70,7 @@ void BookingFH::WriteAll(vector<BookingEntry *> bookingEntries) {
     }
 
     file << "ID" << ",";
+    file << "ReservationID" << ",";
     file << "AnimalID" << ",";
     file << "KennelID" << ",";
     file << "StartDate" << ",";
@@ -77,6 +78,7 @@ void BookingFH::WriteAll(vector<BookingEntry *> bookingEntries) {
 
     for (auto bookingEntry : bookingEntries) {
         file << bookingEntry->GetID() << ",";
+        file << bookingEntry->GetReservationID() << ",";
         file << bookingEntry->GetAnimalID() << ",";
         file << bookingEntry->GetKennelID() << ",";
         file << bookingEntry->GetStartDate() << ",";

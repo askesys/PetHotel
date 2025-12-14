@@ -12,17 +12,19 @@ using namespace std;
 
 class BookingEntry {
 private:
-    int id;
+    int ID;
+    int ReservationID;
     int AnimalID;
     int KennelID;
     Date StartDate;
     Date EndDate;
 
 public:
-    BookingEntry(int AnimalID, int KennelID, Date StartDate, Date EndDate):
-    AnimalID(AnimalID), KennelID(KennelID), StartDate(StartDate), EndDate(EndDate) {}
+    BookingEntry(int ID, int ReservationID, int AnimalID, int KennelID, Date StartDate, Date EndDate);
+    BookingEntry(int ReservationID, int AnimalID, int KennelID, Date StartDate, Date EndDate);
     void SetID(int id);
     int GetID() const;
+    int GetReservationID() const;
     int GetAnimalID() const;
     int GetKennelID() const;
     string GetStartDate() const;
