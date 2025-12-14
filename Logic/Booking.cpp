@@ -5,6 +5,7 @@
 #include "Booking.h"
 #include <chrono>
 #include <complex>
+#include "../Animals/Rodent.h"
 
 #include "../Files/BookingFH.h"
 #include "../Kennel.h"
@@ -44,12 +45,6 @@ void Booking::GenerateBookingCalendar(const vector<Kennel *> &kennels, map<int, 
         id++;
     }
 
-}
-
-
-map<int, vector<Animal *> > Booking::GetCurrentAnimals(map<int, Animal *> animalMap) {
-    map<int,vector<Animal*>> currentKennelsAnimals;
-
     for (BookingEntry *bookingEntry : bookingEntries) {
         int animalID = bookingEntry->GetAnimalID();
         int kennelID = bookingEntry->GetKennelID();
@@ -58,7 +53,6 @@ map<int, vector<Animal *> > Booking::GetCurrentAnimals(map<int, Animal *> animal
         if (beginDate < endDate) {
             if (startDate <= beginDate) {
                 bookingEntry->SetStartDate(beginDate);
-                currentKennelsAnimals[kennelID].push_back(animalMap[animalID]);
             }
             int space = animalMap[animalID]->GetSpace();
             int kid = mapKennelID[kennelID];
@@ -70,7 +64,55 @@ map<int, vector<Animal *> > Booking::GetCurrentAnimals(map<int, Animal *> animal
         }
     }
 
+}
+
+
+map<int, vector<Animal *> > Booking::GetCurrentAnimals(map<int, Animal *> animalMap) {
+    map<int,vector<Animal*>> currentKennelsAnimals;
+
+    for (BookingEntry *bookingEntry : bookingEntries) {
+        int animalID = bookingEntry->GetAnimalID();
+        int kennelID = bookingEntry->GetKennelID();
+        Date startDate(bookingEntry->GetStartDate());
+        Date endDate(bookingEntry->GetEndDate());
+        if (startDate <= beginDate && beginDate < endDate) {
+            currentKennelsAnimals[kennelID].push_back(animalMap[animalID]);
+        }
+    }
+
     return currentKennelsAnimals;
+}
+
+map<int, string> Booking::GetCurrentKennelType(vector<Kennel *> kennels, map<int, Animal *> animalMap) {
+    map<int, string> currentKennelTypes;
+
+    for (Kennel* kennel : kennels) {
+        int kennelID = kennel->GetID();
+        for (BookingEntry* bookingEntry : bookingEntries) {
+            if (kennelID == bookingEntry->GetKennelID()) {
+                Animal* animal = animalMap[bookingEntry->GetAnimalID()];
+                string kennelType = animal->GetType();
+
+                if (kennelType == "Rodent") {
+                    Rodent* rodent = dynamic_cast<Rodent*>(animal);
+                    if (rodent)
+                        kennelType = rodent->GetRodentType();
+                }
+
+                kennel->SetType(kennelType);
+                currentKennelTypes[kennelID] = kennelType;
+                break;
+            }
+        }
+
+        if (!currentKennelTypes.contains(kennelID)) {
+            kennel->SetType("NULL");
+            currentKennelTypes[kennelID] = "NULL";
+        }
+    }
+
+
+    return currentKennelTypes;
 }
 
 

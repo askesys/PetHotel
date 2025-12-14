@@ -46,7 +46,7 @@ public:
     Animal* AddAnimal(const string& type, const string& name, const string& birthDate, const string& breed, const string& rodentType);
     vector<Kennel*> GetKennels() const;
     void SetKennels(vector<Kennel*>);
-    void SetRelevantAnimals(map<int,vector<Animal*>> animalsInKennels);
+    void SetRelevantAnimals();
     void AddKennel(Kennel* kennel);
     void AddKennel(const string& size);
     void RemoveKennel(Kennel* kennel);

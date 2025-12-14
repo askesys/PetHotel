@@ -25,7 +25,7 @@ PetHotel::PetHotel() {
     booking.GenerateBookingCalendar(kennels,animalsMap);
     IDManager::Read();
     auto animalsInKennels = booking.GetCurrentAnimals(animalsMap);
-    SetRelevantAnimals(animalsInKennels);
+    SetRelevantAnimals();
 }
 
 PetHotel::~PetHotel() {
@@ -170,8 +170,7 @@ void PetHotel::MoveAnimal(Reservation* reservation, Animal* animal, Kennel* kenn
         }
     }
 
-    auto animalsInKennels = booking.GetCurrentAnimals(animalsMap);
-    SetRelevantAnimals(animalsInKennels);
+    SetRelevantAnimals();
 }
 
 
@@ -183,21 +182,18 @@ void PetHotel::SetKennels(vector<Kennel*> kennels) {
     this->kennels = kennels;
 }
 
-void PetHotel::SetRelevantAnimals(map<int, vector<Animal *> > animalsInKennels) {
+void PetHotel::SetRelevantAnimals() {
+    booking.GetCurrentKennelType(this->kennels, animalsMap);
+    auto animalsInKennels = booking.GetCurrentAnimals(animalsMap);
+
     for (Kennel* kennel: this->kennels) {
         kennel->SetAnimals(vector<Animal *>());
-        kennel->SetType("NULL");
         kennel->SetIsEmpty(true);
 
         if (animalsInKennels.contains(kennel->GetID())) {
+            kennel->SetIsEmpty(false);
             for (Animal* animal: animalsInKennels[kennel->GetID()]) {
                 kennel->AddAnimal(animal);
-                if (kennel->GetType() == "NULL") {
-                    string kennelType = animal->GetType();
-                    if (kennelType == "Rodent") kennelType = dynamic_cast<Rodent*>(animal)->GetRodentType();
-                    kennel->SetType(kennelType);
-                    kennel->SetIsEmpty(false);
-                }
             }
         }
     }
@@ -344,8 +340,7 @@ void PetHotel::EditReservation(Reservation *reservation, DatePeriod period) {
     reservation->SetStartDate(targetStartDate.toString());
     reservation->SetEndDate(targetEndDate.toString());
 
-    auto animalsInKennels = booking.GetCurrentAnimals(animalsMap);
-    SetRelevantAnimals(animalsInKennels);
+    SetRelevantAnimals();
 }
 
 
@@ -405,8 +400,8 @@ void PetHotel::EditReservation(Reservation *reservation, const vector<Animal *>&
     }
 
     reservation->SetAnimals(targetAnimals);
-    auto animalsInKennels = booking.GetCurrentAnimals(animalsMap);
-    SetRelevantAnimals(animalsInKennels);
+
+    SetRelevantAnimals();
 }
 
 void PetHotel::RemoveReservation(Reservation *reservation) {

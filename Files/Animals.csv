@@ -1,7 +1,9 @@
 ID,Type,Name,BirthDate,Breed,CareSchedule,Weight,RodentType
-1001,Dog,Mihai,08/10/2003,Chihuahua,Should be walked several times a day,53,NULL
-1002,Dog,Kudsi,11/01/1998,Buldog,Should be walked several times a day,90,NULL
-1003,Dog,Mert,13/03/2001,Spaniel,Should be walked several times a day,78,NULL
-1004,Dog,Velimir,10/09/2004,Shepard,Should be walked several times a day,80,NULL
-1005,Dog,Simona,06/07/2005,Chihuahua,Should be walked several times a day,67,NULL
-1006,Dog,Ichigo,12/01/2009,Labrador,Should be walked twice a day,31,NULL
+10001,Dog,Bella,12/04/2021,Labrador Retriever,Should be walked several times a day,29,NULL
+20001,Cat,Luna,18/01/2022,Maine Coon,Should be fed 3 times per day,7,NULL
+30001,Rodent,Rosie,11/08/2021,Peruvian Guinea Pig,Should be cleaned each 3 days,NULL,GuineaPig
+20002,Cat,Oliver,25/07/2025,British Shorthair,Should be fed 3 times per day,6,NULL
+30002,Rodent,Whisker,19/11/2023,Satin Mouse,Should be cleaned each 4 days,NULL,Mouse
+10002,Dog,Rocky,30/08/2022,French Bulldog,Should be walked several times a day,12,NULL
+10003,Dog,Max,03/09/2020,German Shepherd,Should be walked several times a day,34,NULL
+30003,Rodent,Thumper,23/06/2020,Holland Lop,Should be cleaned each 2 days,NULL,Rabbit

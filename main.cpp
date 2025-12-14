@@ -58,7 +58,8 @@ Animal* RegisterAnimal(PetHotel& petHotel) {
         cout << "Your cat was succesfully added to our Pet Hotel. Its ID is " << animal->GetID() << endl;
     }
     else if (animalType == 3) {
-        cout << "Enter type of your rodent: ";
+        //I didn't check but should work with other types but type name should be consistent between all the rodents of this type
+        cout << "Enter type of your rodent (GuineaPig/Mouse/Rabbit): ";
         getline(cin, rodentType);
         cout << "Recommended care schedule: " << Animal::RecommendCareSchedule("Rodent", rodentType) << endl;
         cout << "Write your care schedule: ";
@@ -235,6 +236,7 @@ void MakeReservation(PetHotel& petHotel) {
             for (auto bdone: bd) {
                 petHotel.AddBooking(animal, reservation->GetID(), bdone.kennelID, DatePeriod(bdone.startDate, bdone.endDate));
             }
+            petHotel.SetRelevantAnimals();
         }
         else if (chooseKennelManually == 2) {
             cout << "Input ID of the kennel: ";
@@ -254,6 +256,7 @@ void MakeReservation(PetHotel& petHotel) {
                 }
 
                 petHotel.AddBooking(animal, reservation->GetID(), kennelID, datePeriod);
+                petHotel.SetRelevantAnimals();
             }
             else {
                 cout << "This animal cannot be accommodated in this kennel" << endl;
@@ -475,6 +478,8 @@ int main() {
     PetHotel petHotel;
     int actorOption{-1};
     bool executionCycle{true};
+
+    //Add required number of kennels
     //InitKennels(petHotel);
 
     int choice{-1};

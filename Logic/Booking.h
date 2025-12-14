@@ -43,6 +43,7 @@ public:
 
     void GenerateBookingCalendar(const vector<Kennel *> &kennels, map<int, Animal*> animalMap);
     map<int,vector<Animal*>> GetCurrentAnimals(map<int, Animal*> animalMap);
+    map<int, string> GetCurrentKennelType(vector<Kennel*> kennels, map<int, Animal *> animalMap);
     void AddBooking(int reseravationID, int animalID, int kennelID, DatePeriod datePeriod, int requiredSpace);
     void FindPossibleBookings(const vector<Kennel *> &kennels, DatePeriod datePeriod, int requiredSpace,
     vector<BookingData>& bookingData);

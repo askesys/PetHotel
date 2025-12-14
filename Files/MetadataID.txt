@@ -1,6 +1,6 @@
-Reservation 7
+Reservation 4
 Kennel 110
-Dog 1006
-Cat 2000
-Rodent 3000
-Booking 18
+Dog 10003
+Cat 20002
+Rodent 30003
+Booking 6
